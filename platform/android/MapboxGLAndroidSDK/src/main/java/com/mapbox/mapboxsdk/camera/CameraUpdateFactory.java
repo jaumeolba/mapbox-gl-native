@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 
 public class CameraUpdateFactory {
 
@@ -66,7 +65,7 @@ public class CameraUpdateFactory {
      * @param zoom
      * @return
      */
-    public static CameraUpdate newLatLngZoom(@NonNull LatLngZoom latLng){
+    public static CameraUpdate newLatLngZoom(@NonNull LatLng latLng, float zoom){
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

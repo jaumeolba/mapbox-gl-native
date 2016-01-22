@@ -81,7 +81,6 @@ import com.mapbox.mapboxsdk.exceptions.InvalidAccessTokenException;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.CoordinateBounds;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.utils.MathUtils;
@@ -1006,45 +1005,6 @@ public final class MapView extends FrameLayout {
         }
     }
 
-
-    /**
-     * <p>
-     * Centers the map on a new {@link LatLng} immediately while changing the current zoom level.
-     * </p>
-     * <p>
-     * The initial value is a center {@link LatLng} of (0, 0) and a zoom level of 0.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setLatLng(LatLng, boolean)}.
-     *
-     * @param latLngZoom The new center and zoom level.
-     * @see MapView#setLatLng(LatLngZoom, boolean)
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLngZoom latLngZoom) {
-        setLatLng(latLngZoom, false);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new {@link LatLng} while changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial value is a center {@link LatLng} of (0, 0) and a zoom level of 0.
-     *
-     * @param latLngZoom  The new center and zoom level.
-     * @param animated    If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLngZoom latLngZoom, boolean animated) {
-        if (latLngZoom == null) {
-            Log.w(TAG, "latLngZoom was null, so just returning");
-            return;
-        }
-        long duration = animated ? ANIMATION_DURATION : 0;
-        mNativeMapView.cancelTransitions();
-        mNativeMapView.setLatLngZoom(latLngZoom, duration);
-    }
-
-
     /**
      * Returns the current coordinate at the center of the map view.
      *
@@ -1106,48 +1066,6 @@ public final class MapView extends FrameLayout {
         }
     }
 
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate immediately while changing the current zoom level.
-     * </p>
-     * <p>
-     * The initial value is a center coordinate of (0, 0) and a zoom level of 0.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setCenterCoordinate(LatLngZoom, boolean)}.
-     *
-     * @param centerCoordinate The new coordinate and zoom level.
-     * @see MapView#setCenterCoordinate(LatLngZoom, boolean)
-     * @deprecated use {@link #setLatLng(LatLngZoom)} instead.
-     */
-    @UiThread
-    @Deprecated
-    public void setCenterCoordinate(@NonNull LatLngZoom centerCoordinate) {
-        setCenterCoordinate(centerCoordinate, false);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate while changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial value is a center coordinate of (0, 0) and a zoom level of 0.
-     *
-     * @param centerCoordinate The new coordinate and zoom level.
-     * @param animated         If true, animates the change. If false, immediately changes the map.
-     * @deprecated use {@link #setLatLng(LatLngZoom, boolean)}} instead.
-     */
-    @UiThread
-    @Deprecated
-    public void setCenterCoordinate(@NonNull LatLngZoom centerCoordinate,
-                                    boolean animated) {
-        if (centerCoordinate == null) {
-            Log.w(TAG, "centerCoordinate was null, so just returning");
-            return;
-        }
-        long duration = animated ? ANIMATION_DURATION : 0;
-        mNativeMapView.cancelTransitions();
-        mNativeMapView.setLatLngZoom(centerCoordinate, duration);
-    }
 
     /**
      * Resets the map to the minimum zoom level, a center coordinate of (0, 0), a true north heading,

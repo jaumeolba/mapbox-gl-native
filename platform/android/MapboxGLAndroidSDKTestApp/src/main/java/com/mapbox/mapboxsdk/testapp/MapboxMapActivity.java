@@ -8,13 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLngZoom;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.constants.Style;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -44,7 +42,7 @@ public class MapboxMapActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.SATELLITE_STREETS);
-                mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLngZoom(43.876550, -103.454791, 14)));
+                mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.876550, -103.454791), 14));
             }
         });
 

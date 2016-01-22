@@ -8,10 +8,8 @@ import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.geometry.ProjectedMeters;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
-import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -305,18 +303,6 @@ final class NativeMapView {
         return nativeGetZoom(mNativeMapViewPtr);
     }
 
-    public void setLatLngZoom(LatLngZoom latLngZoom) {
-        setLatLngZoom(latLngZoom, 0);
-    }
-
-    public void setLatLngZoom(LatLngZoom latLngZoom, long duration) {
-        nativeSetLatLngZoom(mNativeMapViewPtr, latLngZoom, duration);
-    }
-
-    public LatLngZoom getLatLngZoom() {
-        return nativeGetLatLngZoom(mNativeMapViewPtr);
-    }
-
     public void resetZoom() {
         nativeResetZoom(mNativeMapViewPtr);
     }
@@ -578,11 +564,6 @@ final class NativeMapView {
                                       long duration);
 
     private native double nativeGetZoom(long nativeMapViewPtr);
-
-    private native void nativeSetLatLngZoom(long nativeMapViewPtr,
-                                            LatLngZoom lonLatZoom, long duration);
-
-    private native LatLngZoom nativeGetLatLngZoom(long nativeMapViewPtr);
 
     private native void nativeResetZoom(long nativeMapViewPtr);
 

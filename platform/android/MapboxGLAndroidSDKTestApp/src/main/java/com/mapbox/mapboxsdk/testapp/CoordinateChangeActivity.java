@@ -11,7 +11,6 @@ import android.view.View;
 
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -38,7 +37,8 @@ public class CoordinateChangeActivity extends AppCompatActivity {
         mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.onCreate(savedInstanceState);
         mMapView.setStyle(Style.MAPBOX_STREETS);
-        mMapView.setLatLng(new LatLngZoom(38.87031, -77.00897, 16));
+        mMapView.setLatLng(new LatLng(38.87031, -77.00897));
+        mMapView.setZoom(16);
         mMapView.setCompassEnabled(false);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
