@@ -198,6 +198,9 @@ public final class MapView extends FrameLayout {
     // Instance members
     //
 
+    //
+    private MapboxMap mMapboxMap;
+
     // Used to call JNI NativeMapView
     private NativeMapView mNativeMapView;
 
@@ -562,11 +565,10 @@ public final class MapView extends FrameLayout {
     //
 
     // Common initialization code goes here
-    private void initialize(Context context, AttributeSet attrs) {
-        if (context == null) {
-            Log.w(TAG, "context was null, so just returning");
-            return;
-        }
+    private void initialize(@NonNull Context context, @Nullable AttributeSet attrs) {
+
+        // Create model
+        mMapboxMap = new MapboxMap(this);
 
         // Inflate content
         View view = LayoutInflater.from(context).inflate(R.layout.mapview_internal, this);
@@ -4122,7 +4124,11 @@ public final class MapView extends FrameLayout {
      */
     @UiThread
     public void getMapAsync(@NonNull OnMapReadyCallback callback){
-        callback.onMapReady(new MapboxMap(this));
+        callback.onMapReady(mMapboxMap);
+    }
+
+    MapboxMap getMapboxMap(){
+        return mMapboxMap;
     }
 
     private void setWidgetGravity(@NonNull final View view, int gravity) {

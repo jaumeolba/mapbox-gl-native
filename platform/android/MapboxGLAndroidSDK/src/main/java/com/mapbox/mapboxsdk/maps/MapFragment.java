@@ -1,6 +1,7 @@
 package com.mapbox.mapboxsdk.maps;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,10 +21,10 @@ import com.mapbox.mapboxsdk.maps.MapView;
  * using a FragmentManager.
  * </p>
  * <p>
- * To get a reference to the MapView, use {@link #getMap()}
+ * To get a reference to the MapView, use {@link #getMapAsync(OnMapReadyCallback)}}
  * </p>
  *
- * @see #getMap()
+ * @see #getMapAsync(OnMapReadyCallback)
  */
 public class MapFragment extends Fragment {
 
@@ -34,12 +35,28 @@ public class MapFragment extends Fragment {
     // Tag used for logging
     private static final String TAG = "MapFragment";
 
+    // Argument used for configuration
+    private static final String ARGS_MAPBOXMAP_OPTIONS = "MapboxMapOptions";
+
     //
     // Instance members
     //
 
     // The map
     private MapView mMap;
+    private OnMapReadyCallback mMapReadyCallback;
+
+    public MapFragment newInstance(){
+        return new MapFragment();
+    }
+
+    public MapFragment newInstance(MapboxMapOptions mapboxMapOptions) {
+        final MapFragment mapFragment = new MapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ARGS_MAPBOXMAP_OPTIONS, mapboxMapOptions);
+        mapFragment.setArguments(bundle);
+        return mapFragment;
+    }
 
     //
     // Lifecycle events
@@ -113,6 +130,10 @@ public class MapFragment extends Fragment {
 
         // Need to pass on to view
         mMap.onResume();
+
+        if(mMapReadyCallback!=null){
+            mMapReadyCallback.onMapReady(mMap.getMapboxMap());
+        }
     }
 
     // Called before fragment is destroyed
@@ -138,7 +159,9 @@ public class MapFragment extends Fragment {
     // Property methods
     //
 
-    public MapView getMap() {
-        return mMap;
+    @NonNull
+    public void getMapAsync(@NonNull OnMapReadyCallback onMapReadyCallback){
+        mMapReadyCallback = onMapReadyCallback;
     }
+
 }
