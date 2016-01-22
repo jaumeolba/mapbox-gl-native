@@ -23,6 +23,7 @@ import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -407,6 +408,10 @@ public class MapboxMap {
     //
     // Camera API
     //
+
+    public void setCameraPosition(CameraPosition cameraPosition){
+        mMapView.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
 
     /**
      * Gets the current position of the camera.
