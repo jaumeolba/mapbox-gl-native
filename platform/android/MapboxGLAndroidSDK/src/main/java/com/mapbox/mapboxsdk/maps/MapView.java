@@ -58,7 +58,6 @@ import android.widget.ZoomButtonsController;
 import com.almeros.android.multitouch.gesturedetectors.RotateGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.ShoveGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.TwoFingerGestureDetector;
-import com.mapbox.mapboxsdk.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.Icon;
@@ -2798,7 +2797,7 @@ public final class MapView extends FrameLayout {
     }
 
     // Used by UserLocationView
-    void update() {
+    public void update() {
         if (mNativeMapView != null) {
             mNativeMapView.update();
         }

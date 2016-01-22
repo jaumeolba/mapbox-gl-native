@@ -1798,7 +1798,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
 
-    jclass nativeMapViewClass = env->FindClass("com/mapbox/mapboxsdk/views/NativeMapView");
+    jclass nativeMapViewClass = env->FindClass("com/mapbox/mapboxsdk/maps/NativeMapView");
     if (nativeMapViewClass == nullptr) {
         env->ExceptionDescribe();
         return JNI_ERR;

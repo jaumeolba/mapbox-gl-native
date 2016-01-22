@@ -9,7 +9,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.mapbox.mapboxsdk.MapFragment;
+import com.mapbox.mapboxsdk.maps.MapFragment;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;

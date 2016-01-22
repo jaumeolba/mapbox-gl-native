@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk;
+package com.mapbox.mapboxsdk.maps;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 

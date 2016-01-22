@@ -1,7 +1,8 @@
-package com.mapbox.mapboxsdk;
+package com.mapbox.mapboxsdk.maps;
 
 import android.support.annotation.NonNull;
 
+import com.mapbox.mapboxsdk.maps.MapFragment;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
