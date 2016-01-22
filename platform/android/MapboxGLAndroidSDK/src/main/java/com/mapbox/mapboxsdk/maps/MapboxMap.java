@@ -255,93 +255,6 @@ public class MapboxMap {
     }
 
     //
-    // POSITION
-    //
-
-    /**
-     * Returns the current coordinate at the center of the map view.
-     *
-     * @return The current coordinate.
-     */
-    @UiThread
-    @NonNull
-    public LatLng getLatLng() {
-        return mMapView.getCenterCoordinate();
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate immediately without changing the zoom level.
-     * </p>
-     * <p>
-     * The initial coordinate is (0, 0).
-     * </p>
-     * If you want to animate the change, use {@link MapView#setCenterCoordinate(LatLng, boolean)}.
-     *
-     * @param centerCoordinate The new coordinate.
-     * @see MapView#setCenterCoordinate(LatLng, boolean)
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLng centerCoordinate) {
-        setLatLng(centerCoordinate, false);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate without changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial coordinate is (0, 0).
-     *
-     * @param centerCoordinate The new coordinate.
-     * @param animated         If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLng centerCoordinate, boolean animated) {
-        mMapView.setCenterCoordinate(centerCoordinate, animated);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate immediately while changing the current zoom level.
-     * </p>
-     * <p>
-     * The initial value is a center coordinate of (0, 0) and a zoom level of 0.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setCenterCoordinate(LatLngZoom, boolean)}.
-     *
-     * @param centerCoordinate The new coordinate and zoom level.
-     * @see MapView#setCenterCoordinate(LatLngZoom, boolean)
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLngZoom centerCoordinate) {
-        setLatLng(centerCoordinate, false);
-    }
-
-    /**
-     * Resets the map to the minimum zoom level, a center coordinate of (0, 0), a true north heading,
-     * and animates the change.
-     */
-    @UiThread
-    public void resetPosition() {
-        mMapView.resetPosition();
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate while changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial value is a center coordinate of (0, 0) and a zoom level of 0.
-     *
-     * @param centerCoordinate The new coordinate and zoom level.
-     * @param animated         If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLngZoom centerCoordinate,
-                          boolean animated) {
-        mMapView.setCenterCoordinate(centerCoordinate, animated);
-    }
-
-    //
     // SCROLL
     //
 
@@ -373,94 +286,8 @@ public class MapboxMap {
     }
 
     //
-    // Pitch / Tilt
+    // ROTATION
     //
-
-    /**
-     * Gets the current Tilt in degrees of the MapView
-     *
-     * @return tilt in degrees
-     */
-    public double getTilt() {
-        return mMapView.getTilt();
-    }
-
-    /**
-     * Sets the Tilt in degrees of the MapView.
-     *
-     * @param pitch    New tilt in degrees
-     * @param duration Animation time in milliseconds.  If null then 0 is used, making the animation immediate.
-     */
-    @FloatRange(from = MapView.MINIMUM_TILT, to = MapView.MAXIMUM_TILT)
-    public void setTilt(Double pitch, @Nullable Long duration) {
-        mMapView.setTilt(pitch, duration);
-    }
-
-    //
-    // Rotation
-    //
-
-    /**
-     * Returns the current heading of the map relative to true north.
-     *
-     * @return The current heading measured in degrees.
-     */
-    @UiThread
-    @FloatRange(from = 0, to = 360)
-    public double getDirection() {
-        return mMapView.getDirection();
-    }
-
-    /**
-     * <p>
-     * Rotates the map to a new heading relative to true north immediately.
-     * </p>
-     * <ul>
-     * <li>The value 0 means that the top edge of the map view will correspond to true north.</li>
-     * <li>The value 90 means the top of the map will point due east.</li>
-     * <li>The value 180 means the top of the map will point due south.</li>
-     * <li>The value 270 means the top of the map will point due west.</li>
-     * </ul>
-     * <p>
-     * The initial heading is 0.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setDirection(double, boolean)}.
-     *
-     * @param direction The new heading measured in degrees.
-     * @see MapView#setDirection(double, boolean)
-     */
-    @UiThread
-    public void setDirection(@FloatRange(from = 0, to = 360) double direction) {
-        setDirection(direction, false);
-    }
-
-    /**
-     * <p>
-     * Rotates the map to a new heading relative to true north and optionally animates the change.
-     * </p>
-     * <ul>
-     * <li>The value 0 means that the top edge of the map view will correspond to true north.</li>
-     * <li>The value 90 means the top of the map will point due east.</li>
-     * <li>The value 180 means the top of the map will point due south.</li>
-     * <li>The value 270 means the top of the map will point due west.</li>
-     * </ul>
-     * The initial heading is 0.
-     *
-     * @param direction The new heading measured in degrees from true north.
-     * @param animated  If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setDirection(@FloatRange(from = 0, to = 360) double direction, boolean animated) {
-        mMapView.setDirection(direction, animated);
-    }
-
-    /**
-     * Resets the map heading to true north and animates the change.
-     */
-    @UiThread
-    public void resetNorth() {
-        mMapView.resetNorth();
-    }
 
     /**
      * Returns whether the user may rotate the map.
@@ -490,62 +317,8 @@ public class MapboxMap {
     }
 
     //
-    // Scale
+    // ZOOM
     //
-
-    /**
-     * Returns the current zoom level of the map view.
-     *
-     * @return The current zoom level.
-     */
-    @UiThread
-    @FloatRange(from = 0.0, to = MapView.MAXIMUM_ZOOM_LEVEL)
-    public double getZoom() {
-        return mMapView.getZoomLevel();
-    }
-
-    /**
-     * <p>
-     * Zooms the map to a new zoom level immediately without changing the center coordinate.
-     * </p>
-     * <p>
-     * At zoom level 0, tiles cover the entire world map;
-     * at zoom level 1, tiles cover 1/14 of the world;
-     * at zoom level 2, tiles cover 1/16 of the world, and so on.
-     * </p>
-     * <p>
-     * The initial zoom level is 0. The maximum zoom level is {@link MapView#MAXIMUM_ZOOM_LEVEL}.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setZoomLevel(double, boolean)}.
-     *
-     * @param zoomLevel The new coordinate.
-     * @see MapView#setZoomLevel(double, boolean)
-     * @see MapView#MAXIMUM_ZOOM_LEVEL
-     */
-    @UiThread
-    public void setZoom(@FloatRange(from = 0.0, to = MapView.MAXIMUM_ZOOM_LEVEL) double zoomLevel) {
-        setZoom(zoomLevel, false);
-    }
-
-    /**
-     * <p>
-     * Zooms the map to a new zoom level and optionally animates the change without changing the center coordinate.
-     * </p>
-     * <p>
-     * At zoom level 0, tiles cover the entire world map;
-     * at zoom level 1, tiles cover 1/14 of the world;
-     * at zoom level 2, tiles cover 1/16 of the world, and so on.
-     * </p>
-     * The initial zoom level is 0. The maximum zoom level is {@link MapView#MAXIMUM_ZOOM_LEVEL}.
-     *
-     * @param zoomLevel The new coordinate.
-     * @param animated  If true, animates the change. If false, immediately changes the map.
-     * @see MapView#MAXIMUM_ZOOM_LEVEL
-     */
-    @UiThread
-    public void setZoom(@FloatRange(from = 0.0, to = MapView.MAXIMUM_ZOOM_LEVEL) double zoomLevel, boolean animated) {
-        mMapView.setZoomLevel(zoomLevel, animated);
-    }
 
     /**
      * Returns whether the user may zoom the map.
@@ -573,6 +346,10 @@ public class MapboxMap {
     public void setZoomEnabled(boolean zoomEnabled) {
         mMapView.setZoomEnabled(true);
     }
+
+    //
+    // Manual zoom controls
+    //
 
     /**
      * Gets whether the zoom controls are enabled.
@@ -1105,109 +882,6 @@ public class MapboxMap {
     }
 
     //
-    // CoordinateBounds
-    //
-
-    /**
-     * Changes the map's viewport to fit the given coordinate bounds.
-     *
-     * @param bounds The bounds that the viewport will show in its entirety.
-     */
-    @UiThread
-    public void setLatLngBounds(@NonNull LatLngBounds bounds) {
-        setLatLngBounds(bounds, false);
-    }
-
-    /**
-     * Changes the map's viewing area to fit the given coordinate bounds, optionally animating the change.
-     *
-     * @param bounds   The bounds that the viewport will show in its entirety.
-     * @param animated If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLngBounds(@NonNull LatLngBounds bounds, boolean animated) {
-        setLatLngBounds(bounds, new RectF(), animated);
-    }
-
-    /**
-     * Changes the map’s viewport to fit the given coordinate bounds with additional padding at the
-     * edge of the map,  optionally animating the change.
-     *
-     * @param bounds   The bounds that the viewport will show in its entirety.
-     * @param padding  The minimum padding (in pixels) that will be visible around the given coordinate bounds.
-     * @param animated If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLngBounds(@NonNull LatLngBounds bounds, @NonNull RectF padding, boolean animated) {
-        LatLng northEast = new LatLng(bounds.getLatNorth(), bounds.getLonEast());
-        LatLng southWest = new LatLng(bounds.getLatSouth(), bounds.getLonWest());
-
-        LatLng[] coordinates = {
-                new LatLng(northEast.getLatitude(),southWest.getLongitude()),
-                southWest,
-                new LatLng(southWest.getLatitude(),northEast.getLongitude()),
-                northEast
-        };
-
-        setLatLngBounds(coordinates, padding, animated);
-    }
-
-    /**
-     * Changes the map’s viewport to fit the given coordinates, optionally some additional padding on each side
-     * and animating the change.
-     *
-     * @param coordinates The coordinates that the viewport will show.
-     * @param padding     The minimum padding (in pixels) that will be visible around the given coordinate bounds.
-     * @param animated    If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLngBounds(@NonNull LatLng[] coordinates, @NonNull RectF padding, boolean animated) {
-        setLatLngBounds(coordinates, padding, getDirection(), animated);
-    }
-
-    private void setLatLngBounds(LatLng[] coordinates, RectF padding, double direction, boolean animated) {
-        setLatLngBounds(coordinates, padding, direction, animated ? MapView.ANIMATION_DURATION : 0l);
-    }
-
-    private void setLatLngBounds(LatLng[] coordinates, RectF padding, double direction, long duration) {
-        mMapView.setVisibleCoordinateBounds(coordinates, padding, direction, duration);
-    }
-
-    //
-    // Bearing
-    //
-
-    /**
-     * Get Bearing in degrees
-     *
-     * @return Bearing in degrees
-     */
-    public double getBearing() {
-        return mMapView.getBearing();
-    }
-
-    /**
-     * Set Bearing in degrees
-     *
-     * @param bearing Bearing in degrees
-     */
-    public void setBearing(float bearing) {
-        mMapView.setBearing(bearing);
-    }
-
-    /**
-     * Sets Bearing in degrees
-     * <p>
-     * NOTE: Used by UserLocationView
-     *
-     * @param bearing  Bearing in degrees
-     * @param duration Length of time to rotate
-     */
-    public void setBearing(float bearing, long duration) {
-        mMapView.setBearing(bearing, duration);
-    }
-
-    //
     // Touch events
     //
 
@@ -1235,26 +909,26 @@ public class MapboxMap {
     // Map events
     //
 
-    /**
-     * <p>
-     * Add a callback that's invoked when the displayed map view changes.
-     * </p>
-     * To remove the callback, use {@link MapView#removeOnMapChangedListener(OnMapChangedListener)}.
-     *
-     * @param listener The callback that's invoked on every frame rendered to the map view.
-     * @see MapView#removeOnMapChangedListener(OnMapChangedListener)
-     */
+//    /**
+//     * <p>
+//     * Add a callback that's invoked when the displayed map view changes.
+//     * </p>
+//     * To remove the callback, use {@link MapView#removeOnMapChangedListener(OnMapChangedListener)}.
+//     *
+//     * @param listener The callback that's invoked on every frame rendered to the map view.
+//     * @see MapView#removeOnMapChangedListener(OnMapChangedListener)
+//     */
     @UiThread
     public void addOnMapChangedListener(@Nullable MapView.OnMapChangedListener listener) {
         mMapView.addOnMapChangedListener(listener);
     }
 
-    /**
-     * Remove a callback added with {@link MapView#addOnMapChangedListener(OnMapChangedListener)}
-     *
-     * @param listener The previously added callback to remove.
-     * @see MapView#addOnMapChangedListener(OnMapChangedListener)
-     */
+//    /**
+//     * Remove a callback added with {@link MapboxMap#addOnMapChangedListener(OnMapChangedListener)}
+//     *
+//     * @param listener The previously added callback to remove.
+//     * @see MapView#addOnMapChangedListener(OnMapChangedListener)
+//     */
     @UiThread
     public void removeOnMapChangedListener(@Nullable MapView.OnMapChangedListener listener) {
         mMapView.removeOnMapChangedListener(listener);
