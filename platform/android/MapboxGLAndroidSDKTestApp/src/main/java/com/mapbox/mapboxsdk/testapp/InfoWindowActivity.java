@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -60,7 +61,7 @@ public class InfoWindowActivity extends AppCompatActivity {
                 .position(new LatLng(38.8954236, -77.0394623)));
 
         final DecimalFormat formatter = new DecimalFormat("#.#####");
-        mMapView.setOnMapLongClickListener(new MapView.OnMapLongClickListener() {
+        mMapView.setOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(@NonNull LatLng point) {
 

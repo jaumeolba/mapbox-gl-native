@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
@@ -58,7 +59,7 @@ public class InfoWindow {
             public boolean onTouch(View v, MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_UP) {
                     boolean handledDefaultClick = false;
-                    MapView.OnInfoWindowClickListener onInfoWindowClickListener =
+                    MapboxMap.OnInfoWindowClickListener onInfoWindowClickListener =
                             mMapView.get().getOnInfoWindowClickListener();
                     if (onInfoWindowClickListener != null) {
                         handledDefaultClick = onInfoWindowClickListener.onMarkerClick(getBoundMarker());

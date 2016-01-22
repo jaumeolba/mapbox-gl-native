@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -48,7 +49,7 @@ public class InfoWindowAdapterActivity extends AppCompatActivity {
         mIconFactory = IconFactory.getInstance(this);
         mIconDrawable = ContextCompat.getDrawable(this, R.drawable.ic_location_city_24dp);
 
-        mMapView.setInfoWindowAdapter(new MapView.InfoWindowAdapter() {
+        mMapView.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
 
             private int tenDp = (int) getResources().getDimension(R.dimen.attr_margin);
 

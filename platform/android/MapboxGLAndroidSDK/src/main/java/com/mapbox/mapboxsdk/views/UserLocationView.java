@@ -25,6 +25,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -90,7 +91,7 @@ public final class UserLocationView extends View {
     private Location mUserLocation;
     private UserLocationListener mUserLocationListener;
 
-    MapView.OnMyLocationChangeListener mOnMyLocationChangeListener;
+    private MapboxMap.OnMyLocationChangeListener mOnMyLocationChangeListener;
 
     @MyLocationTracking.Mode
     private int mMyLocationTrackingMode;
@@ -692,7 +693,7 @@ public final class UserLocationView extends View {
         }
     }
 
-    public void setOnMyLocationChangeListener(@Nullable MapView.OnMyLocationChangeListener listener) {
+    public void setOnMyLocationChangeListener(@Nullable MapboxMap.OnMyLocationChangeListener listener) {
         mOnMyLocationChangeListener = listener;
     }
 

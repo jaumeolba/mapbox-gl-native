@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -67,7 +69,7 @@ public class CameraActivity extends AppCompatActivity {
                         .bearing(180)                               // Sets the orientation of the camera to south
                         .build();                                   // Creates a CameraPosition from the builder
 
-                MapView.CancelableCallback callback = new MapView.CancelableCallback() {
+                MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
                     @Override
                     public void onCancel() {
                         Log.i(TAG, "Duration onCancel Callback called.");
@@ -95,7 +97,7 @@ public class CameraActivity extends AppCompatActivity {
                         .tilt(20)                                   // Sets the tilt of the camera to 30 degrees
                         .build();                                   // Creates a CameraPosition from the builder
 
-                MapView.CancelableCallback callback = new MapView.CancelableCallback() {
+                MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
                     @Override
                     public void onCancel() {
                         Log.i(TAG, "Duration onCancel Callback called.");

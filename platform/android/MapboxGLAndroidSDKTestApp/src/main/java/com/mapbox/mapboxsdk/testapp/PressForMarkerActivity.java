@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -18,7 +19,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class PressForMarkerActivity extends AppCompatActivity implements MapView.OnMapLongClickListener {
+public class PressForMarkerActivity extends AppCompatActivity implements MapboxMap.OnMapLongClickListener {
 
     private MapView mMapView;
     private ArrayList<MarkerOptions> mMarkerList = new ArrayList<>();

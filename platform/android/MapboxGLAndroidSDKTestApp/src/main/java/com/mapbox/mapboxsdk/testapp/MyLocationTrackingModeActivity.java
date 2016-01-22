@@ -14,13 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.views.MapView;
 
-public class MyLocationTrackingModeActivity extends AppCompatActivity implements MapView.OnMyLocationChangeListener, AdapterView.OnItemSelectedListener {
+public class MyLocationTrackingModeActivity extends AppCompatActivity implements MapboxMap.OnMyLocationChangeListener, AdapterView.OnItemSelectedListener {
 
     private MapView mMapView;
     private Spinner mLocationSpinner, mBearingSpinner;
@@ -66,7 +67,7 @@ public class MyLocationTrackingModeActivity extends AppCompatActivity implements
             finish();
         }
 
-        mMapView.setOnMyLocationTrackingModeChangeListener(new MapView.OnMyLocationTrackingModeChangeListener() {
+        mMapView.setOnMyLocationTrackingModeChangeListener(new MapboxMap.OnMyLocationTrackingModeChangeListener() {
             @Override
             public void onMyLocationTrackingModeChange(@MyLocationTracking.Mode int myLocationTrackingMode) {
                 if (MyLocationTracking.TRACKING_NONE == myLocationTrackingMode) {
@@ -77,7 +78,7 @@ public class MyLocationTrackingModeActivity extends AppCompatActivity implements
             }
         });
         
-        mMapView.setOnMyBearingTrackingModeChangeListener(new MapView.OnMyBearingTrackingModeChangeListener() {
+        mMapView.setOnMyBearingTrackingModeChangeListener(new MapboxMap.OnMyBearingTrackingModeChangeListener() {
             @Override
             public void onMyBearingTrackingModeChange(@MyBearingTracking.Mode int myBearingTrackingMode) {
                 if (MyBearingTracking.NONE == myBearingTrackingMode) {

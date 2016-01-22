@@ -239,7 +239,7 @@ public final class MapView extends FrameLayout {
     private List<Marker> mMarkersNearLastTap = new ArrayList<>();
     private List<Marker> mSelectedMarkers = new ArrayList<>();
     private List<InfoWindow> mInfoWindows = new ArrayList<>();
-    private InfoWindowAdapter mInfoWindowAdapter;
+    private MapboxMap.InfoWindowAdapter mInfoWindowAdapter;
     private List<Icon> mIcons = new ArrayList<>();
 
     // Used for the Mapbox Logo
@@ -252,23 +252,23 @@ public final class MapView extends FrameLayout {
     private List<OnMapChangedListener> mOnMapChangedListener = new ArrayList<>();
 
     // Used to manage map click event listeners
-    private OnMapClickListener mOnMapClickListener;
-    private OnMapLongClickListener mOnMapLongClickListener;
+    private MapboxMap.OnMapClickListener mOnMapClickListener;
+    private MapboxMap.OnMapLongClickListener mOnMapLongClickListener;
 
     // Used to manage fling and scroll event listeners
-    private OnFlingListener mOnFlingListener;
-    private OnScrollListener mOnScrollListener;
+    private MapboxMap.OnFlingListener mOnFlingListener;
+    private MapboxMap.OnScrollListener mOnScrollListener;
 
     // Used to manage marker click event listeners
-    private OnMarkerClickListener mOnMarkerClickListener;
-    private OnInfoWindowClickListener mOnInfoWindowClickListener;
+    private MapboxMap.OnMarkerClickListener mOnMarkerClickListener;
+    private MapboxMap.OnInfoWindowClickListener mOnInfoWindowClickListener;
 
     // Used to manage FPS change event listeners
-    private OnFpsChangedListener mOnFpsChangedListener;
+    private MapboxMap.OnFpsChangedListener mOnFpsChangedListener;
 
     // Used to manage tracking mode changes
-    private OnMyLocationTrackingModeChangeListener mOnMyLocationTrackingModeChangeListener;
-    private OnMyBearingTrackingModeChangeListener mOnMyBearingTrackingModeChangeListener;
+    private MapboxMap.OnMyLocationTrackingModeChangeListener mOnMyLocationTrackingModeChangeListener;
+    private MapboxMap.OnMyBearingTrackingModeChangeListener mOnMyBearingTrackingModeChangeListener;
 
     //
     // Properties
@@ -459,105 +459,6 @@ public final class MapView extends FrameLayout {
      */
     public static final int DID_FINISH_RENDERING_MAP_FULLY_RENDERED = 13;
 
-    //
-    // Interfaces
-    //
-
-    /**
-     * Interface definition for a callback to be invoked when the map is flinged.
-     *
-     * @see MapView#setOnFlingListener(OnFlingListener)
-     */
-    public interface OnFlingListener {
-        /**
-         * Called when the map is flinged.
-         */
-        void onFling();
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the map is scrolled.
-     *
-     * @see MapView#setOnScrollListener(OnScrollListener)
-     */
-    public interface OnScrollListener {
-        /**
-         * Called when the map is scrolled.
-         */
-        void onScroll();
-    }
-
-    /**
-     * Interface definition for a callback to be invoked on every frame rendered to the map view.
-     *
-     * @see MapView#setOnFpsChangedListener(OnFpsChangedListener)
-     */
-    public interface OnFpsChangedListener {
-        /**
-         * Called for every frame rendered to the map view.
-         *
-         * @param fps The average number of frames rendered over the last second.
-         */
-        void onFpsChanged(double fps);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the user clicks on the map view.
-     *
-     * @see MapView#setOnMapClickListener(OnMapClickListener)
-     */
-    public interface OnMapClickListener {
-        /**
-         * Called when the user clicks on the map view.
-         *
-         * @param point The projected map coordinate the user clicked on.
-         */
-        void onMapClick(@NonNull LatLng point);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the user long clicks on the map view.
-     *
-     * @see MapView#setOnMapLongClickListener(OnMapLongClickListener)
-     */
-    public interface OnMapLongClickListener {
-        /**
-         * Called when the user long clicks on the map view.
-         *
-         * @param point The projected map coordinate the user long clicked on.
-         */
-        void onMapLongClick(@NonNull LatLng point);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the user clicks on a marker.
-     *
-     * @see MapView#setOnMarkerClickListener(OnMarkerClickListener)
-     */
-    public interface OnMarkerClickListener {
-        /**
-         * Called when the user clicks on a marker.
-         *
-         * @param marker The marker the user clicked on.
-         * @return If true the listener has consumed the event and the info window will not be shown.
-         */
-        boolean onMarkerClick(@NonNull Marker marker);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the user clicks on an info window.
-     *
-     * @see MapView#setOnInfoWindowClickListener(OnInfoWindowClickListener)
-     */
-    public interface OnInfoWindowClickListener {
-        /**
-         * Called when the user clicks on an info window.
-         *
-         * @param marker The marker of the info window the user clicked on.
-         * @return If true the listener has consumed the event and the info window will not be closed.
-         */
-        boolean onMarkerClick(@NonNull Marker marker);
-    }
 
     /**
      * Interface definition for a callback to be invoked when the displayed map view changes.
@@ -585,84 +486,6 @@ public final class MapView extends FrameLayout {
          *               {@link #DID_FINISH_RENDERING_MAP_FULLY_RENDERED}.
          */
         void onMapChanged(@MapChange int change);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when an info window will be shown.
-     *
-     * @see MapView#setInfoWindowAdapter(InfoWindowAdapter)
-     */
-    public interface InfoWindowAdapter {
-        /**
-         * Called when an info window will be shown as a result of a marker click.
-         *
-         * @param marker The marker the user clicked on.
-         * @return View to be shown as a info window. If null is returned the default
-         * info window will be shown.
-         */
-        @Nullable
-        View getInfoWindow(@NonNull Marker marker);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the the My Location dot
-     * (which signifies the user's location) changes location.
-     *
-     * @see MapView#setOnMyLocationChangeListener(OnMyLocationChangeListener)
-     */
-    public interface OnMyLocationChangeListener {
-        /**
-         * Called when the location of the My Location dot has changed
-         * (be it latitude/longitude, bearing or accuracy).
-         *
-         * @param location The current location of the My Location dot The type of map change event.
-         */
-        void onMyLocationChange(@Nullable Location location);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the the My Location tracking mode changes.
-     *
-     * @see MapView#setMyLocationTrackingMode(int)
-     */
-    public interface OnMyLocationTrackingModeChangeListener {
-
-        /**
-         * Called when the tracking mode of My Location tracking has changed
-         *
-         * @param myLocationTrackingMode the current active location tracking mode
-         */
-        void onMyLocationTrackingModeChange(@MyLocationTracking.Mode int myLocationTrackingMode);
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the the My Location tracking mode changes.
-     *
-     * @see MapView#setMyLocationTrackingMode(int)
-     */
-    public interface OnMyBearingTrackingModeChangeListener {
-
-        /**
-         * Called when the tracking mode of My Bearing tracking has changed
-         *
-         * @param myBearingTrackingMode the current active bearing tracking mode
-         */
-        void onMyBearingTrackingModeChange(@MyBearingTracking.Mode int myBearingTrackingMode);
-    }
-
-    /**
-     * A callback interface for reporting when a task is complete or cancelled.
-     */
-    public interface CancelableCallback {
-        /**
-         * Invoked when a task is cancelled.
-         */
-        void onCancel();
-
-        /**
-         * Invoked when a task is complete.
-         */
-        void onFinish();
     }
 
     //
@@ -1775,7 +1598,7 @@ public final class MapView extends FrameLayout {
      * @param callback The callback to invoke from the main thread when the animation stops. If the animation completes normally, onFinish() is called; otherwise, onCancel() is called. Do not update or animate the camera from within onCancel().
      */
     @UiThread
-    public final void animateCamera(CameraUpdate update, MapView.CancelableCallback callback) {
+    public final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
         animateCamera(update, 1, callback);
     }
 
@@ -1788,7 +1611,7 @@ public final class MapView extends FrameLayout {
      * @param callback   An optional callback to be notified from the main thread when the animation stops. If the animation stops due to its natural completion, the callback will be notified with onFinish(). If the animation stops due to interruption by a later camera movement or a user gesture, onCancel() will be called. The callback should not attempt to move or animate the camera in its cancellation method. If a callback isn't required, leave it as null.
      */
     @UiThread
-    public final void animateCamera(CameraUpdate update, int durationMs, final MapView.CancelableCallback callback) {
+    public final void animateCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
 
         if (update.getTarget() == null) {
             Log.w(TAG, "animateCamera with null target coordinate passed in.  Will immediately return without animating camera.");
@@ -1845,7 +1668,7 @@ public final class MapView extends FrameLayout {
      * @param callback   An optional callback to be notified from the main thread when the animation stops. If the animation stops due to its natural completion, the callback will be notified with onFinish(). If the animation stops due to interruption by a later camera movement or a user gesture, onCancel() will be called. The callback should not attempt to move or animate the camera in its cancellation method. If a callback isn't required, leave it as null.
      */
     @UiThread
-    public final void easeCamera(CameraUpdate update, int durationMs, final MapView.CancelableCallback callback) {
+    public final void easeCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
         if (update.getTarget() == null) {
             Log.w(TAG, "easeCamera with null target coordinate passed in.  Will immediately return without easing camera.");
             return;
@@ -3908,7 +3731,7 @@ public final class MapView extends FrameLayout {
      *                          To unset the callback, use null.
      */
     @UiThread
-    public void setInfoWindowAdapter(@Nullable InfoWindowAdapter infoWindowAdapter) {
+    public void setInfoWindowAdapter(@Nullable MapboxMap.InfoWindowAdapter infoWindowAdapter) {
         mInfoWindowAdapter = infoWindowAdapter;
     }
 
@@ -3919,7 +3742,7 @@ public final class MapView extends FrameLayout {
      */
     @UiThread
     @Nullable
-    public InfoWindowAdapter getInfoWindowAdapter() {
+    public MapboxMap.InfoWindowAdapter getInfoWindowAdapter() {
         return mInfoWindowAdapter;
     }
 
@@ -3931,7 +3754,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnFpsChangedListener(@Nullable OnFpsChangedListener listener) {
+    public void setOnFpsChangedListener(@Nullable MapboxMap.OnFpsChangedListener listener) {
         mOnFpsChangedListener = listener;
     }
 
@@ -3956,7 +3779,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnScrollListener(@Nullable OnScrollListener listener) {
+    public void setOnScrollListener(@Nullable MapboxMap.OnScrollListener listener) {
         mOnScrollListener = listener;
     }
 
@@ -3967,7 +3790,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnFlingListener(@Nullable OnFlingListener listener) {
+    public void setOnFlingListener(@Nullable MapboxMap.OnFlingListener listener) {
         mOnFlingListener = listener;
     }
 
@@ -3978,7 +3801,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMapClickListener(@Nullable OnMapClickListener listener) {
+    public void setOnMapClickListener(@Nullable MapboxMap.OnMapClickListener listener) {
         mOnMapClickListener = listener;
     }
 
@@ -3989,7 +3812,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMapLongClickListener(@Nullable OnMapLongClickListener listener) {
+    public void setOnMapLongClickListener(@Nullable MapboxMap.OnMapLongClickListener listener) {
         mOnMapLongClickListener = listener;
     }
 
@@ -4000,7 +3823,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMarkerClickListener(@Nullable OnMarkerClickListener listener) {
+    public void setOnMarkerClickListener(@Nullable MapboxMap.OnMarkerClickListener listener) {
         mOnMarkerClickListener = listener;
     }
 
@@ -4011,7 +3834,7 @@ public final class MapView extends FrameLayout {
      */
     @UiThread
     @Nullable
-    public OnInfoWindowClickListener getOnInfoWindowClickListener() {
+    public MapboxMap.OnInfoWindowClickListener getOnInfoWindowClickListener() {
         return mOnInfoWindowClickListener;
     }
 
@@ -4022,7 +3845,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnInfoWindowClickListener(@Nullable OnInfoWindowClickListener listener) {
+    public void setOnInfoWindowClickListener(@Nullable MapboxMap.OnInfoWindowClickListener listener) {
         mOnInfoWindowClickListener = listener;
     }
 
@@ -4080,7 +3903,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyLocationChangeListener(@Nullable OnMyLocationChangeListener listener) {
+    public void setOnMyLocationChangeListener(@Nullable MapboxMap.OnMyLocationChangeListener listener) {
         mUserLocationView.setOnMyLocationChangeListener(listener);
     }
 
@@ -4134,7 +3957,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyLocationTrackingModeChangeListener(@Nullable OnMyLocationTrackingModeChangeListener listener) {
+    public void setOnMyLocationTrackingModeChangeListener(@Nullable MapboxMap.OnMyLocationTrackingModeChangeListener listener) {
         mOnMyLocationTrackingModeChangeListener = listener;
     }
 
@@ -4191,7 +4014,7 @@ public final class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyBearingTrackingModeChangeListener(@Nullable OnMyBearingTrackingModeChangeListener listener) {
+    public void setOnMyBearingTrackingModeChangeListener(@Nullable MapboxMap.OnMyBearingTrackingModeChangeListener listener) {
         mOnMyBearingTrackingModeChangeListener = listener;
     }
 
@@ -4434,5 +4257,8 @@ public final class MapView extends FrameLayout {
             intent.setData(Uri.parse(url));
             context.startActivity(intent);
         }
+    }
+
+    public class OnMyLocationChangeListener {
     }
 }

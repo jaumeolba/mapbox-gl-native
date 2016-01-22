@@ -11,6 +11,7 @@ import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
 import com.mapbox.geocoder.service.models.GeocoderFeature;
 import com.mapbox.geocoder.service.models.GeocoderResponse;
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -56,7 +57,7 @@ public class GeocoderActivity extends AppCompatActivity {
         mapView.setZoomLevel(15);
         mapView.onCreate(savedInstanceState);
 
-        mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
+        mapView.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
                 setMessage("Geocoding...");

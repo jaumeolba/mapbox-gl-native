@@ -50,7 +50,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnFlingListener(OnFlingListener)
      */
-    public interface OnFlingListener extends MapView.OnFlingListener{
+    public interface OnFlingListener {
         /**
          * Called when the map is flinged.
          */
@@ -62,7 +62,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnScrollListener(OnScrollListener)
      */
-    public interface OnScrollListener extends MapView.OnScrollListener{
+    public interface OnScrollListener {
         /**
          * Called when the map is scrolled.
          */
@@ -74,7 +74,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnFpsChangedListener(OnFpsChangedListener)
      */
-    public interface OnFpsChangedListener extends MapView.OnFpsChangedListener{
+    public interface OnFpsChangedListener {
         /**
          * Called for every frame rendered to the map view.
          *
@@ -88,7 +88,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnMapClickListener(OnMapClickListener)
      */
-    public interface OnMapClickListener extends MapView.OnMapClickListener{
+    public interface OnMapClickListener {
         /**
          * Called when the user clicks on the map view.
          *
@@ -102,7 +102,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnMapLongClickListener(OnMapLongClickListener)
      */
-    public interface OnMapLongClickListener extends MapView.OnMapLongClickListener {
+    public interface OnMapLongClickListener {
         /**
          * Called when the user long clicks on the map view.
          *
@@ -116,7 +116,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnMarkerClickListener(OnMarkerClickListener)
      */
-    public interface OnMarkerClickListener extends MapView.OnMarkerClickListener {
+    public interface OnMarkerClickListener {
         /**
          * Called when the user clicks on a marker.
          *
@@ -131,7 +131,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnInfoWindowClickListener(OnInfoWindowClickListener)
      */
-    public interface OnInfoWindowClickListener extends MapView.OnInfoWindowClickListener{
+    public interface OnInfoWindowClickListener {
         /**
          * Called when the user clicks on an info window.
          *
@@ -147,7 +147,7 @@ public class MapboxMap {
      * @see MapboxMap#addOnMapChangedListener(OnMapChangedListener)
      * @see MapView.MapChange
      */
-    public interface OnMapChangedListener extends MapView.OnMapChangedListener{
+    public interface OnMapChangedListener {
         /**
          * Called when the displayed map view changes.
          *
@@ -174,7 +174,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setInfoWindowAdapter(InfoWindowAdapter)
      */
-    public interface InfoWindowAdapter extends MapView.InfoWindowAdapter{
+    public interface InfoWindowAdapter {
         /**
          * Called when an info window will be shown as a result of a marker click.
          *
@@ -192,7 +192,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setOnMyLocationChangeListener(OnMyLocationChangeListener)
      */
-    public interface OnMyLocationChangeListener extends MapView.OnMyLocationChangeListener {
+    public interface OnMyLocationChangeListener {
         /**
          * Called when the location of the My Location dot has changed
          * (be it latitude/longitude, bearing or accuracy).
@@ -207,7 +207,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setMyLocationTrackingMode(int)
      */
-    public interface OnMyLocationTrackingModeChangeListener extends MapView.OnMyLocationTrackingModeChangeListener{
+    public interface OnMyLocationTrackingModeChangeListener {
 
         /**
          * Called when the tracking mode of My Location tracking has changed
@@ -222,7 +222,7 @@ public class MapboxMap {
      *
      * @see MapboxMap#setMyLocationTrackingMode(int)
      */
-    public interface OnMyBearingTrackingModeChangeListener extends MapView.OnMyBearingTrackingModeChangeListener{
+    public interface OnMyBearingTrackingModeChangeListener {
 
         /**
          * Called when the tracking mode of My Bearing tracking has changed
@@ -235,7 +235,7 @@ public class MapboxMap {
     /**
      * A callback interface for reporting when a task is complete or cancelled.
      */
-    public interface CancelableCallback extends MapView.CancelableCallback{
+    public interface CancelableCallback {
         /**
          * Invoked when a task is cancelled.
          */
@@ -1240,24 +1240,24 @@ public class MapboxMap {
      * <p>
      * Add a callback that's invoked when the displayed map view changes.
      * </p>
-     * To remove the callback, use {@link MapboxMap#removeOnMapChangedListener(OnMapChangedListener)}.
+     * To remove the callback, use {@link MapView#removeOnMapChangedListener(OnMapChangedListener)}.
      *
      * @param listener The callback that's invoked on every frame rendered to the map view.
-     * @see MapboxMap#removeOnMapChangedListener(OnMapChangedListener)
+     * @see MapView#removeOnMapChangedListener(OnMapChangedListener)
      */
     @UiThread
-    public void addOnMapChangedListener(@Nullable OnMapChangedListener listener) {
+    public void addOnMapChangedListener(@Nullable MapView.OnMapChangedListener listener) {
         mMapView.addOnMapChangedListener(listener);
     }
 
     /**
-     * Remove a callback added with {@link MapboxMap#addOnMapChangedListener(OnMapChangedListener)}
+     * Remove a callback added with {@link MapView#addOnMapChangedListener(OnMapChangedListener)}
      *
      * @param listener The previously added callback to remove.
-     * @see MapboxMap#addOnMapChangedListener(OnMapChangedListener)
+     * @see MapView#addOnMapChangedListener(OnMapChangedListener)
      */
     @UiThread
-    public void removeOnMapChangedListener(@Nullable OnMapChangedListener listener) {
+    public void removeOnMapChangedListener(@Nullable MapView.OnMapChangedListener listener) {
         mMapView.removeOnMapChangedListener(listener);
     }
 

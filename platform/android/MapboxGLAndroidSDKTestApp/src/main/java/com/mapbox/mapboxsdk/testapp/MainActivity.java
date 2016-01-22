@@ -24,6 +24,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMapView.setOnFpsChangedListener(new MyOnFpsChangedListener());
 
-        mMapView.setOnMapLongClickListener(new MapView.OnMapLongClickListener() {
+        mMapView.setOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(@NonNull LatLng point) {
                 MarkerOptions marker = new MarkerOptions()
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mMapView.setOnMapClickListener(new MapView.OnMapClickListener() {
+        mMapView.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng point) {
                 String location = LAT_LON_FORMATTER.format(point.getLatitude()) + ", " +
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mMapView.setOnMarkerClickListener(new MapView.OnMarkerClickListener() {
+        mMapView.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 Snackbar.make(mCoordinatorLayout, "Marker Click Listener for " + marker.getTitle(), Snackbar.LENGTH_SHORT).show();
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mMapView.setOnInfoWindowClickListener(new MapView.OnInfoWindowClickListener() {
+        mMapView.setOnInfoWindowClickListener(new MapboxMap.OnInfoWindowClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 Snackbar.make(mCoordinatorLayout, "InfoWindow Click Listener for " + marker.getTitle(), Snackbar.LENGTH_SHORT).show();
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mMapView.setOnMyLocationChangeListener(new MapView.OnMyLocationChangeListener() {
+        mMapView.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(@Nullable Location location) {
                 String desc = "Loc Chg: ";
@@ -497,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_LOCATION);
             } else {
-                mMapView.setOnMyLocationChangeListener(new MapView.OnMyLocationChangeListener() {
+                mMapView.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
                     @Override
                     public void onMyLocationChange(@Nullable Location location) {
                         if (location != null) {
@@ -616,7 +618,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Called when FPS changes
-    private class MyOnFpsChangedListener implements MapView.OnFpsChangedListener {
+    private class MyOnFpsChangedListener implements MapboxMap.OnFpsChangedListener {
 
         @Override
         public void onFpsChanged(double fps) {
