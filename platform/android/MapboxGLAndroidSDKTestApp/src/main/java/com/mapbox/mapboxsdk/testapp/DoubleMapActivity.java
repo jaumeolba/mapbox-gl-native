@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 public class DoubleMapActivity extends AppCompatActivity {
 

@@ -12,7 +12,7 @@ import android.view.View;
 import com.mapbox.mapboxsdk.MapFragment;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 public class MapFragmentActivity extends AppCompatActivity {
 

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.mapbox.mapboxsdk.R;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -21,7 +22,7 @@ import java.util.TimerTask;
  * when it isn't true north (0.0). Tapping the compass resets the bearing to true
  * north and hides the compass.
  */
-final class CompassView extends ImageView {
+public class CompassView extends ImageView {
 
     private Timer mNorthTimer;
     private double mDirection = 0.0f;

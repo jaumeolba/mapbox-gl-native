@@ -2,7 +2,7 @@ package com.mapbox.mapboxsdk.annotations;
 
 import android.support.annotation.NonNull;
 
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 /**
  * Annotation is a overlay on top of a {@link MapView},

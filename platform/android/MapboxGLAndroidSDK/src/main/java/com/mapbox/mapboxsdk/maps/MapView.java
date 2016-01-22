@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk.views;
+package com.mapbox.mapboxsdk.maps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -58,7 +58,6 @@ import android.widget.ZoomButtonsController;
 import com.almeros.android.multitouch.gesturedetectors.RotateGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.ShoveGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.TwoFingerGestureDetector;
-import com.mapbox.mapboxsdk.MapboxMap;
 import com.mapbox.mapboxsdk.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.annotations.Annotation;
@@ -87,6 +86,8 @@ import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.utils.MathUtils;
+import com.mapbox.mapboxsdk.views.CompassView;
+import com.mapbox.mapboxsdk.views.UserLocationView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -324,7 +325,7 @@ public final class MapView extends FrameLayout {
      * with {@link MapView#REGION_DID_CHANGE}.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int REGION_WILL_CHANGE = 0;
 
@@ -338,7 +339,7 @@ public final class MapView extends FrameLayout {
      * with {@link MapView#REGION_DID_CHANGE_ANIMATED}.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int REGION_WILL_CHANGE_ANIMATED = 1;
 
@@ -347,7 +348,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is triggered whenever the currently displayed map region is changing.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int REGION_IS_CHANGING = 2;
 
@@ -357,7 +358,7 @@ public final class MapView extends FrameLayout {
      * without an animation.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int REGION_DID_CHANGE = 3;
 
@@ -367,7 +368,7 @@ public final class MapView extends FrameLayout {
      * with an animation.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int REGION_DID_CHANGE_ANIMATED = 4;
 
@@ -380,7 +381,7 @@ public final class MapView extends FrameLayout {
      * {@link MapView#DID_FAIL_LOADING_MAP}.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int WILL_START_LOADING_MAP = 5;
 
@@ -389,7 +390,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is triggered when the map has successfully loaded a new map style.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FINISH_LOADING_MAP = 6;
 
@@ -401,7 +402,7 @@ public final class MapView extends FrameLayout {
      * This event is triggered when the map has failed to load a new map style.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FAIL_LOADING_MAP = 7;
 
@@ -410,7 +411,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int WILL_START_RENDERING_FRAME = 8;
 
@@ -419,7 +420,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FINISH_RENDERING_FRAME = 9;
 
@@ -428,7 +429,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FINISH_RENDERING_FRAME_FULLY_RENDERED = 10;
 
@@ -437,7 +438,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int WILL_START_RENDERING_MAP = 11;
 
@@ -446,7 +447,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FINISH_RENDERING_MAP = 12;
 
@@ -455,7 +456,7 @@ public final class MapView extends FrameLayout {
      * This {@link MapChange} is currently not implemented.
      * </p>
      *
-     * @see com.mapbox.mapboxsdk.views.MapView.OnMapChangedListener
+     * @see MapView.OnMapChangedListener
      */
     public static final int DID_FINISH_RENDERING_MAP_FULLY_RENDERED = 13;
 

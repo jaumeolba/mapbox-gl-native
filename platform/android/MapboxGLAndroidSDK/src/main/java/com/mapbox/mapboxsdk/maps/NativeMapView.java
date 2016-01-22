@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk.views;
+package com.mapbox.mapboxsdk.maps;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -11,6 +11,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.geometry.ProjectedMeters;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
+import com.mapbox.mapboxsdk.maps.MapView;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 

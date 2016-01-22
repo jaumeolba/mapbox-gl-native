@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk;
+package com.mapbox.mapboxsdk.maps;
 
 import android.Manifest;
 import android.content.Context;
@@ -32,7 +32,6 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.geometry.LatLngZoom;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
-import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.views.UserLocationView;
 
 import java.util.List;

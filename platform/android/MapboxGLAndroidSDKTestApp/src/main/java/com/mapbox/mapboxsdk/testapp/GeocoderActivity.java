@@ -11,12 +11,12 @@ import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
 import com.mapbox.geocoder.service.models.GeocoderFeature;
 import com.mapbox.geocoder.service.models.GeocoderResponse;
-import com.mapbox.mapboxsdk.MapboxMap;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.util.List;
 
