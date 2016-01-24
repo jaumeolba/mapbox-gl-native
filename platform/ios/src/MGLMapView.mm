@@ -3075,10 +3075,15 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 
 - (void)setUserLocationVerticalAlignment:(MGLAnnotationVerticalAlignment)alignment
 {
+    [self setUserLocationVerticalAlignment:alignment animated:YES];
+}
+
+- (void)setUserLocationVerticalAlignment:(MGLAnnotationVerticalAlignment)alignment animated:(BOOL)animated
+{
     _userLocationVerticalAlignment = alignment;
     if (self.userTrackingMode != MGLUserTrackingModeNone)
     {
-        [self locationManager:self.locationManager didUpdateLocations:@[self.userLocation.location] animated:YES];
+        [self locationManager:self.locationManager didUpdateLocations:@[self.userLocation.location] animated:animated];
     }
 }
 
