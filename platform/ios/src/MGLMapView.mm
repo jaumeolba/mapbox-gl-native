@@ -1755,7 +1755,14 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
-    [self setCenterCoordinate:self.centerCoordinate zoomLevel:zoomLevel animated:animated];
+    if (zoomLevel == self.zoomLevel) return;
+    _mbglMap->cancelTransitions();
+    
+    CGFloat duration = animated ? MGLAnimationDuration : 0;
+    
+    _mbglMap->setZoom(zoomLevel,
+                      MGLEdgeInsetsFromNSEdgeInsets(self.contentInset),
+                      MGLDurationInSeconds(duration));
 }
 
 - (MGLCoordinateBounds)visibleCoordinateBounds
