@@ -3003,6 +3003,10 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
     {
         self.userTrackingState = MGLUserTrackingStatePossible;
     }
+    if ( ! animated)
+    {
+        self.userTrackingState = MGLUserTrackingStateChanged;
+    }
 
     switch (_userTrackingMode)
     {
