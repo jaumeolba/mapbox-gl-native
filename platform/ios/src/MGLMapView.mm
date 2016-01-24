@@ -2027,7 +2027,10 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 - (mbgl::CameraOptions)cameraOptionsObjectForAnimatingToCamera:(MGLMapCamera *)camera
 {
     mbgl::CameraOptions options;
-    options.center = MGLLatLngFromLocationCoordinate2D(camera.centerCoordinate);
+    if (CLLocationCoordinate2DIsValid(camera.centerCoordinate))
+    {
+        options.center = MGLLatLngFromLocationCoordinate2D(camera.centerCoordinate);
+    }
     options.padding = MGLEdgeInsetsFromNSEdgeInsets(self.contentInset);
     options.zoom = MGLZoomLevelForAltitude(camera.altitude, camera.pitch,
                                            camera.centerCoordinate.latitude,
