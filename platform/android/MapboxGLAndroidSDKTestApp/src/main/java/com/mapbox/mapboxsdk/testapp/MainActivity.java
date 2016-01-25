@@ -163,26 +163,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mMapView.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(@Nullable Location location) {
-                String desc = "Loc Chg: ";
-                boolean noInfo = true;
-                if (location.hasSpeed()) {
-                    desc += String.format("Spd = %.1f km/h ", location.getSpeed() * 3.6f);
-                    noInfo = false;
-                }
-                if (location.hasAltitude()) {
-                    desc += String.format("Alt = %.0f m ", location.getAltitude());
-                    noInfo = false;
-                }
-                if (noInfo) {
-                    desc += "No extra info";
-                }
-                Snackbar.make(mCoordinatorLayout, desc, Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
         mFpsTextView = (TextView) findViewById(R.id.view_fps);
         mFpsTextView.setText("");
 
@@ -191,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Toggle GPS position updates
-                toggleGps(!mMapView.isMyLocationEnabled());
+                toggleGps(!mMapboxMap.isMyLocationEnabled());
             }
         });
 
@@ -203,17 +183,40 @@ public class MainActivity extends AppCompatActivity {
             mMapView.addMarkers(mMarkerList);
         }
 
-        // Set default UI state
-        //FIXME need to correctly manage this
-//        mNavigationView.getMenu().findItem(R.id.action_compass).setChecked(mMapboxMap.isCompassEnabled());
-//        mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mMapboxMap.isDebugActive());
-        mNavigationView.getMenu().findItem(R.id.action_markers).setChecked(mIsAnnotationsOn);
-        toggleGps(mMapView.isMyLocationEnabled());
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
+
+                // set MapboxMap for later usage
                 mMapboxMap = mapboxMap;
+
+                // add location listener to MapboxMap
+                mapboxMap.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
+                    @Override
+                    public void onMyLocationChange(@Nullable Location location) {
+                        String desc = "Loc Chg: ";
+                        boolean noInfo = true;
+                        if (location.hasSpeed()) {
+                            desc += String.format("Spd = %.1f km/h ", location.getSpeed() * 3.6f);
+                            noInfo = false;
+                        }
+                        if (location.hasAltitude()) {
+                            desc += String.format("Alt = %.0f m ", location.getAltitude());
+                            noInfo = false;
+                        }
+                        if (noInfo) {
+                            desc += "No extra info";
+                        }
+                        Snackbar.make(mCoordinatorLayout, desc, Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Set default UI state
+                mNavigationView.getMenu().findItem(R.id.action_compass).setChecked(mapboxMap.isCompassEnabled());
+                mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mapboxMap.isDebugActive());
+                mNavigationView.getMenu().findItem(R.id.action_markers).setChecked(mIsAnnotationsOn);
+                toggleGps(mapboxMap.isMyLocationEnabled());
+
                 changeMapStyle(mSelectedStyle);
             }
         });
@@ -509,23 +512,23 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_LOCATION);
             } else {
-                mMapView.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
+                mMapboxMap.setOnMyLocationChangeListener(new MapboxMap.OnMyLocationChangeListener() {
                     @Override
                     public void onMyLocationChange(@Nullable Location location) {
                         if (location != null) {
                             mMapView.setZoom(16);
                             mMapView.setLatLng(new LatLng(location));
-                            mMapView.setOnMyLocationChangeListener(null);
+                            mMapboxMap.setOnMyLocationChangeListener(null);
                         }
                     }
                 });
-                mMapView.setMyLocationEnabled(true);
-                mMapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
-                mMapView.setMyBearingTrackingMode(MyBearingTracking.GPS);
+                mMapboxMap.setMyLocationEnabled(true);
+                mMapboxMap.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
+                mMapboxMap.setMyBearingTrackingMode(MyBearingTracking.GPS);
                 mLocationFAB.setColorFilter(ContextCompat.getColor(this, R.color.primary));
             }
         } else {
-            mMapView.setMyLocationEnabled(false);
+            mMapboxMap.setMyLocationEnabled(false);
             mLocationFAB.setColorFilter(Color.TRANSPARENT);
         }
     }
@@ -613,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addCustomLayer() {
         mIsShowingCustomLayer = true;
-        mMapView.addCustomLayer(
+        mMapboxMap.addCustomLayer(
                 new CustomLayer("custom",
                         ExampleCustomLayer.createContext(),
                         ExampleCustomLayer.InitializeFunction,
@@ -624,7 +627,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void removeCustomLayer() {
         mIsShowingCustomLayer = false;
-        mMapView.removeCustomLayer("custom");
+        mMapboxMap.removeCustomLayer("custom");
     }
 
     // Called when FPS changes

@@ -39,6 +39,8 @@ public class MapboxMap {
 
     private String mStyleUrl;
 
+    private boolean mMyLocationEnabled;
+
     private boolean mCompassEnabled;
     private boolean mZoomEnabled = true;
     private boolean mScrollEnabled = true;
@@ -1088,7 +1090,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isMyLocationEnabled() {
-        return mMapView.isMyLocationEnabled();
+        return mMyLocationEnabled;
     }
 
     /**
@@ -1109,7 +1111,8 @@ public class MapboxMap {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
     public void setMyLocationEnabled(boolean enabled) {
-        mMapView.setMyLocationEnabled(true);
+        mMyLocationEnabled = enabled;
+        mMapView.setMyLocationEnabled(enabled);
     }
 
     /**

@@ -1,3 +1,5 @@
+import android.util.Log;
+
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
@@ -105,7 +107,27 @@ public class MapboxMapTest {
     @Test
     public void testConcurrentInfoWindowDisabled() {
         mMapboxMap.setAllowConcurrentMultipleOpenInfoWindows(false);
-        assertFalse("ConcurretnWindows should be false", mMapboxMap.isAllowConcurrentMultipleOpenInfoWindows());
+        assertFalse("ConcurrentWindows should be false", mMapboxMap.isAllowConcurrentMultipleOpenInfoWindows());
+    }
+
+    @Test
+    public void testMyLocationEnabled(){
+        try{
+            mMapboxMap.setMyLocationEnabled(true);
+            assertTrue("MyLocationEnabled should be true", mMapboxMap.isMyLocationEnabled());
+        }catch (SecurityException e){
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void testMyLocationDisabled(){
+        try{
+            mMapboxMap.setMyLocationEnabled(false);
+            assertFalse("MyLocationEnabled should be false", mMapboxMap.isMyLocationEnabled());
+        }catch (SecurityException e){
+            assertTrue(false);
+        }
     }
 
 }

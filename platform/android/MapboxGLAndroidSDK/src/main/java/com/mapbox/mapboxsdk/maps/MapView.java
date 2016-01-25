@@ -134,7 +134,6 @@ public class MapView extends FrameLayout {
     private static final String STATE_DEBUG_ACTIVE = "debugActive";
     private static final String STATE_STYLE_URL = "styleUrl";
     private static final String STATE_ACCESS_TOKEN = "accessToken";
-    private static final String STATE_STYLE_CLASSES = "styleClasses";
     private static final String STATE_DEFAULT_TRANSITION_DURATION = "defaultTransitionDuration";
     private static final String STATE_MY_LOCATION_ENABLED = "myLocationEnabled";
     private static final String STATE_MY_LOCATION_TRACKING_MODE = "myLocationTracking";
@@ -234,7 +233,6 @@ public class MapView extends FrameLayout {
     // Used for displaying annotations
     // Every annotation that has been added to the map
     private final List<Annotation> mAnnotations = new ArrayList<>();
-    private List<Marker> mMarkersNearLastTap = new ArrayList<>();
     private List<Marker> mSelectedMarkers = new ArrayList<>();
     private List<InfoWindow> mInfoWindows = new ArrayList<>();
     private MapboxMap.InfoWindowAdapter mInfoWindowAdapter;
@@ -693,7 +691,7 @@ public class MapView extends FrameLayout {
             // User location
             try {
                 //noinspection ResourceType
-                setMyLocationEnabled(typedArray.getBoolean(R.styleable.MapView_my_location_enabled, false));
+                mMapboxMap.setMyLocationEnabled(typedArray.getBoolean(R.styleable.MapView_my_location_enabled, false));
             } catch (SecurityException ignore) {
                 // User did not accept location permissions
             }
@@ -731,7 +729,7 @@ public class MapView extends FrameLayout {
             mMapboxMap.setRotateEnabled(savedInstanceState.getBoolean(STATE_ROTATE_ENABLED));
             mMapboxMap.setTiltEnabled(savedInstanceState.getBoolean(STATE_TILT_ENABLED));
             mMapboxMap.setZoomControlsEnabled(savedInstanceState.getBoolean(STATE_ZOOM_CONTROLS_ENABLED));
-            setDebugActive(savedInstanceState.getBoolean(STATE_DEBUG_ACTIVE));
+            mMapboxMap.setDebugActive(savedInstanceState.getBoolean(STATE_DEBUG_ACTIVE));
             mMapboxMap.setStyleUrl(savedInstanceState.getString(STATE_STYLE_URL));
             setAccessToken(savedInstanceState.getString(STATE_ACCESS_TOKEN));
             mNativeMapView.setDefaultTransitionDuration(
@@ -740,39 +738,39 @@ public class MapView extends FrameLayout {
             // User location
             try {
                 //noinspection ResourceType
-                setMyLocationEnabled(savedInstanceState.getBoolean(STATE_MY_LOCATION_ENABLED));
+                mMapboxMap.setMyLocationEnabled(savedInstanceState.getBoolean(STATE_MY_LOCATION_ENABLED));
             } catch (SecurityException ignore) {
                 // User did not accept location permissions
             }
 
             // Compass
-            setCompassEnabled(savedInstanceState.getBoolean(STATE_COMPASS_ENABLED));
-            setCompassGravity(savedInstanceState.getInt(STATE_COMPASS_GRAVITY));
-            setCompassMargins(savedInstanceState.getInt(STATE_COMPASS_MARGIN_LEFT)
+            mMapboxMap.setCompassEnabled(savedInstanceState.getBoolean(STATE_COMPASS_ENABLED));
+            mMapboxMap.setCompassGravity(savedInstanceState.getInt(STATE_COMPASS_GRAVITY));
+            mMapboxMap.setCompassMargins(savedInstanceState.getInt(STATE_COMPASS_MARGIN_LEFT)
                     , savedInstanceState.getInt(STATE_COMPASS_MARGIN_TOP)
                     , savedInstanceState.getInt(STATE_COMPASS_MARGIN_RIGHT)
                     , savedInstanceState.getInt(STATE_COMPASS_MARGIN_BOTTOM));
 
             // Logo
-            setLogoVisibility(savedInstanceState.getInt(STATE_LOGO_VISIBILITY));
-            setLogoGravity(savedInstanceState.getInt(STATE_LOGO_GRAVITY));
-            setLogoMargins(savedInstanceState.getInt(STATE_LOGO_MARGIN_LEFT)
+            mMapboxMap.setLogoVisibility(savedInstanceState.getInt(STATE_LOGO_VISIBILITY));
+            mMapboxMap.setLogoGravity(savedInstanceState.getInt(STATE_LOGO_GRAVITY));
+            mMapboxMap.setLogoMargins(savedInstanceState.getInt(STATE_LOGO_MARGIN_LEFT)
                     , savedInstanceState.getInt(STATE_LOGO_MARGIN_TOP)
                     , savedInstanceState.getInt(STATE_LOGO_MARGIN_RIGHT)
                     , savedInstanceState.getInt(STATE_LOGO_MARGIN_BOTTOM));
 
             // Attribution
-            setAttributionVisibility(savedInstanceState.getInt(STATE_ATTRIBUTION_VISIBILITY));
-            setAttributionGravity(savedInstanceState.getInt(STATE_ATTRIBUTION_GRAVITY));
-            setAttributionMargins(savedInstanceState.getInt(STATE_ATTRIBUTION_MARGIN_LEFT)
+            mMapboxMap.setAttributionVisibility(savedInstanceState.getInt(STATE_ATTRIBUTION_VISIBILITY));
+            mMapboxMap.setAttributionGravity(savedInstanceState.getInt(STATE_ATTRIBUTION_GRAVITY));
+            mMapboxMap.setAttributionMargins(savedInstanceState.getInt(STATE_ATTRIBUTION_MARGIN_LEFT)
                     , savedInstanceState.getInt(STATE_ATTRIBUTION_MARGIN_TOP)
                     , savedInstanceState.getInt(STATE_ATTRIBUTION_MARGIN_RIGHT)
                     , savedInstanceState.getInt(STATE_ATTRIBUTION_MARGIN_BOTTOM));
 
             //noinspection ResourceType
-            setMyLocationTrackingMode(savedInstanceState.getInt(STATE_MY_LOCATION_TRACKING_MODE, MyLocationTracking.TRACKING_NONE));
+            mMapboxMap.setMyLocationTrackingMode(savedInstanceState.getInt(STATE_MY_LOCATION_TRACKING_MODE, MyLocationTracking.TRACKING_NONE));
             //noinspection ResourceType
-            setMyBearingTrackingMode(savedInstanceState.getInt(STATE_MY_BEARING_TRACKING_MODE, MyBearingTracking.NONE));
+            mMapboxMap.setMyBearingTrackingMode(savedInstanceState.getInt(STATE_MY_BEARING_TRACKING_MODE, MyBearingTracking.NONE));
         }
 
         // Force a check for an access token
@@ -801,6 +799,7 @@ public class MapView extends FrameLayout {
      *
      * @param outState Pass in the parent's outState.
      */
+
     @UiThread
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable(STATE_CENTER_LATLNG, getLatLng());
@@ -813,17 +812,17 @@ public class MapView extends FrameLayout {
         outState.putBoolean(STATE_ROTATE_ENABLED, mMapboxMap.isRotateEnabled());
         outState.putBoolean(STATE_TILT_ENABLED, mMapboxMap.isTiltEnabled());
         outState.putBoolean(STATE_ZOOM_CONTROLS_ENABLED, mMapboxMap.isZoomControlsEnabled());
-        outState.putBoolean(STATE_DEBUG_ACTIVE, isDebugActive());
+        outState.putBoolean(STATE_DEBUG_ACTIVE, mMapboxMap.isDebugActive());
         outState.putString(STATE_STYLE_URL, mMapboxMap.getStyleUrl());
         outState.putString(STATE_ACCESS_TOKEN, getAccessToken());
         outState.putLong(STATE_DEFAULT_TRANSITION_DURATION, mNativeMapView.getDefaultTransitionDuration());
-        outState.putBoolean(STATE_MY_LOCATION_ENABLED, isMyLocationEnabled());
+        outState.putBoolean(STATE_MY_LOCATION_ENABLED, mMapboxMap.isMyLocationEnabled());
         outState.putInt(STATE_MY_LOCATION_TRACKING_MODE, mUserLocationView.getMyLocationTrackingMode());
         outState.putInt(STATE_MY_BEARING_TRACKING_MODE, mUserLocationView.getMyBearingTrackingMode());
 
         // Compass
         LayoutParams compassParams = (LayoutParams) mCompassView.getLayoutParams();
-        outState.putBoolean(STATE_COMPASS_ENABLED, isCompassEnabled());
+        outState.putBoolean(STATE_COMPASS_ENABLED, mMapboxMap.isCompassEnabled());
         outState.putInt(STATE_COMPASS_GRAVITY, compassParams.gravity);
         outState.putInt(STATE_COMPASS_MARGIN_LEFT, compassParams.leftMargin);
         outState.putInt(STATE_COMPASS_MARGIN_TOP, compassParams.topMargin);
@@ -2596,7 +2595,6 @@ public class MapView extends FrameLayout {
                         break;
                     }
                 }
-                mMarkersNearLastTap = nearbyMarkers;
             }
 
             if (newSelectedMarkerId >= 0) {
@@ -3412,16 +3410,6 @@ public class MapView extends FrameLayout {
     //
 
     /**
-     * Returns the status of the my-location layer.
-     *
-     * @return True if the my-location layer is enabled, false otherwise.
-     */
-    @UiThread
-    public boolean isMyLocationEnabled() {
-        return mUserLocationView.isEnabled();
-    }
-
-    /**
      * <p>
      * Enables or disables the my-location layer.
      * While enabled, the my-location layer continuously draws an indication of a user's current
@@ -3438,7 +3426,7 @@ public class MapView extends FrameLayout {
     @RequiresPermission(anyOf = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
-    public void setMyLocationEnabled(boolean enabled) {
+    void setMyLocationEnabled(boolean enabled) {
         mUserLocationView.setEnabled(enabled);
     }
 
@@ -3449,7 +3437,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @Nullable
-    public Location getMyLocation() {
+    Location getMyLocation() {
         return mUserLocationView.getLocation();
     }
 
@@ -3461,7 +3449,7 @@ public class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyLocationChangeListener(@Nullable MapboxMap.OnMyLocationChangeListener listener) {
+    void setOnMyLocationChangeListener(@Nullable MapboxMap.OnMyLocationChangeListener listener) {
         mUserLocationView.setOnMyLocationChangeListener(listener);
     }
 
@@ -3482,10 +3470,10 @@ public class MapView extends FrameLayout {
     @RequiresPermission(anyOf = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
-    public void setMyLocationTrackingMode(@MyLocationTracking.Mode int myLocationTrackingMode) {
-        if (myLocationTrackingMode != MyLocationTracking.TRACKING_NONE && !isMyLocationEnabled()) {
+    void setMyLocationTrackingMode(@MyLocationTracking.Mode int myLocationTrackingMode) {
+        if (myLocationTrackingMode != MyLocationTracking.TRACKING_NONE && !mMapboxMap.isMyLocationEnabled()) {
             //noinspection ResourceType
-            setMyLocationEnabled(true);
+            mMapboxMap.setMyLocationEnabled(true);
         }
 
         mUserLocationView.setMyLocationTrackingMode(myLocationTrackingMode);
@@ -3504,7 +3492,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @MyLocationTracking.Mode
-    public int getMyLocationTrackingMode() {
+    int getMyLocationTrackingMode() {
         return mUserLocationView.getMyLocationTrackingMode();
     }
 
@@ -3515,7 +3503,7 @@ public class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyLocationTrackingModeChangeListener(@Nullable MapboxMap.OnMyLocationTrackingModeChangeListener listener) {
+    void setOnMyLocationTrackingModeChangeListener(@Nullable MapboxMap.OnMyLocationTrackingModeChangeListener listener) {
         mOnMyLocationTrackingModeChangeListener = listener;
     }
 
@@ -3538,10 +3526,10 @@ public class MapView extends FrameLayout {
     @RequiresPermission(anyOf = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION})
-    public void setMyBearingTrackingMode(@MyBearingTracking.Mode int myBearingTrackingMode) {
-        if (myBearingTrackingMode != MyBearingTracking.NONE && !isMyLocationEnabled()) {
+    void setMyBearingTrackingMode(@MyBearingTracking.Mode int myBearingTrackingMode) {
+        if (myBearingTrackingMode != MyBearingTracking.NONE && !mMapboxMap.isMyLocationEnabled()) {
             //noinspection ResourceType
-            setMyLocationEnabled(true);
+            mMapboxMap.setMyLocationEnabled(true);
         }
 
         mUserLocationView.setMyBearingTrackingMode(myBearingTrackingMode);
@@ -3560,7 +3548,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @MyLocationTracking.Mode
-    public int getMyBearingTrackingMode() {
+    int getMyBearingTrackingMode() {
         //noinspection ResourceType
         return mUserLocationView.getMyBearingTrackingMode();
     }
@@ -3572,7 +3560,7 @@ public class MapView extends FrameLayout {
      *                 To unset the callback, use null.
      */
     @UiThread
-    public void setOnMyBearingTrackingModeChangeListener(@Nullable MapboxMap.OnMyBearingTrackingModeChangeListener listener) {
+    void setOnMyBearingTrackingModeChangeListener(@Nullable MapboxMap.OnMyBearingTrackingModeChangeListener listener) {
         mOnMyBearingTrackingModeChangeListener = listener;
     }
 
@@ -3628,7 +3616,7 @@ public class MapView extends FrameLayout {
      * @see Gravity
      */
     @UiThread
-    public void setCompassGravity(int gravity) {
+    void setCompassGravity(int gravity) {
         setWidgetGravity(mCompassView, gravity);
     }
 
@@ -3642,7 +3630,7 @@ public class MapView extends FrameLayout {
      * @param bottom The bottom margin in pixels.
      */
     @UiThread
-    public void setCompassMargins(int left, int top, int right, int bottom) {
+    void setCompassMargins(int left, int top, int right, int bottom) {
         setWidgetMargins(mCompassView, left, top, right, bottom);
     }
 
@@ -3661,7 +3649,7 @@ public class MapView extends FrameLayout {
      * @see Gravity
      */
     @UiThread
-    public void setLogoGravity(int gravity) {
+    void setLogoGravity(int gravity) {
         setWidgetGravity(mLogoView, gravity);
     }
 
@@ -3675,7 +3663,7 @@ public class MapView extends FrameLayout {
      * @param bottom The bottom margin in pixels.
      */
     @UiThread
-    public void setLogoMargins(int left, int top, int right, int bottom) {
+    void setLogoMargins(int left, int top, int right, int bottom) {
         setWidgetMargins(mLogoView, left, top, right, bottom);
     }
 
@@ -3688,7 +3676,7 @@ public class MapView extends FrameLayout {
      * @param visibility True to enable the logo; false to disable the logo.
      */
     @UiThread
-    public void setLogoVisibility(int visibility) {
+    void setLogoVisibility(int visibility) {
         mLogoView.setVisibility(visibility);
     }
 
@@ -3707,7 +3695,7 @@ public class MapView extends FrameLayout {
      * @see Gravity
      */
     @UiThread
-    public void setAttributionGravity(int gravity) {
+    void setAttributionGravity(int gravity) {
         setWidgetGravity(mAttributionsView, gravity);
     }
 
@@ -3721,7 +3709,7 @@ public class MapView extends FrameLayout {
      * @param bottom The bottom margin in pixels.
      */
     @UiThread
-    public void setAttributionMargins(int left, int top, int right, int bottom) {
+    void setAttributionMargins(int left, int top, int right, int bottom) {
         setWidgetMargins(mAttributionsView, left, top, right, bottom);
     }
 
@@ -3736,22 +3724,26 @@ public class MapView extends FrameLayout {
      * @param visibility True to enable the attribution button; false to disable the attribution button.
      */
     @UiThread
-    public void setAttributionVisibility(int visibility) {
+    void setAttributionVisibility(int visibility) {
         mAttributionsView.setVisibility(visibility);
     }
 
+    //
+    // Custom layer
+    //
+
     @UiThread
-    public void addCustomLayer(CustomLayer customLayer, String before) {
+    void addCustomLayer(CustomLayer customLayer, String before) {
         mNativeMapView.addCustomLayer(customLayer, before);
     }
 
     @UiThread
-    public void removeCustomLayer(String id) {
+    void removeCustomLayer(String id) {
         mNativeMapView.removeCustomLayer(id);
     }
 
     @UiThread
-    public void invalidateCustomLayers() {
+    void invalidateCustomLayers() {
         mNativeMapView.update();
     }
 
@@ -3768,6 +3760,10 @@ public class MapView extends FrameLayout {
     MapboxMap getMapboxMap() {
         return mMapboxMap;
     }
+
+    //
+    // View utility methods
+    //
 
     private void setWidgetGravity(@NonNull final View view, int gravity) {
         LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
@@ -3819,8 +3815,5 @@ public class MapView extends FrameLayout {
             intent.setData(Uri.parse(url));
             context.startActivity(intent);
         }
-    }
-
-    public class OnMyLocationChangeListener {
     }
 }

@@ -68,22 +68,19 @@ public class DoubleMapActivity extends AppCompatActivity {
             // MapView mini
             mMapViewMini = (MapView) view.findViewById(R.id.mini_map);
             mMapViewMini.onCreate(savedInstanceState);
-            mMapViewMini.setAttributionVisibility(View.GONE);
-            mMapViewMini.setLogoVisibility(View.GONE);
             mMapViewMini.setZoom(4);
-
-            try {
-                mMapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
-                mMapViewMini.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
-            }catch (SecurityException e){
-                // permission is handled in MainActivity
-                getActivity().finish();
-            }
 
             mMapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
                     mapboxMap.setStyle(Style.DARK);
+
+                    try {
+                        mapboxMap.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+                    }catch (SecurityException e){
+                        // permission is handled in MainActivity
+                        getActivity().finish();
+                    }
                 }
             });
 
@@ -93,9 +90,17 @@ public class DoubleMapActivity extends AppCompatActivity {
                     mapboxMap.setStyle(Style.LIGHT);
                     mapboxMap.setAllGesturesEnabled(false);
                     mapboxMap.setCompassEnabled(false);
+                    mapboxMap.setAttributionVisibility(View.GONE);
+                    mapboxMap.setLogoVisibility(View.GONE);
+
+                    try {
+                        mapboxMap.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+                    }catch (SecurityException e){
+                        // permission is handled in MainActivity
+                        getActivity().finish();
+                    }
                 }
             });
-
         }
 
         @Override
