@@ -1949,7 +1949,7 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
         return;
     }
 
-    mbgl::CameraOptions cameraOptions = [self cameraOptionsObjectForAnimatingToCamera:camera];
+    mbgl::CameraOptions cameraOptions = [self cameraOptionsObjectForAnimatingToCamera:camera edgePadding:self.contentInset];
     mbgl::AnimationOptions animationOptions;
     if (duration > 0)
     {
@@ -1984,10 +1984,10 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 {
     self.userTrackingMode = MGLUserTrackingModeNone;
     
-    [self _flyToCamera:camera withDuration:duration peakAltitude:peakAltitude completionHandler:completion];
+    [self _flyToCamera:camera edgePadding:self.contentInset withDuration:duration peakAltitude:peakAltitude completionHandler:completion];
 }
 
-- (void)_flyToCamera:(MGLMapCamera *)camera withDuration:(NSTimeInterval)duration peakAltitude:(CLLocationDistance)peakAltitude completionHandler:(nullable void (^)(void))completion
+- (void)_flyToCamera:(MGLMapCamera *)camera edgePadding:(UIEdgeInsets)insets withDuration:(NSTimeInterval)duration peakAltitude:(CLLocationDistance)peakAltitude completionHandler:(nullable void (^)(void))completion
 {
     _mbglMap->cancelTransitions();
     if ([self.camera isEqual:camera])
@@ -1995,7 +1995,7 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
         return;
     }
 
-    mbgl::CameraOptions cameraOptions = [self cameraOptionsObjectForAnimatingToCamera:camera];
+    mbgl::CameraOptions cameraOptions = [self cameraOptionsObjectForAnimatingToCamera:camera edgePadding:insets];
     mbgl::AnimationOptions animationOptions;
     if (duration >= 0)
     {
@@ -2024,14 +2024,14 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 
 /// Returns a CameraOptions object that specifies parameters for animating to
 /// the given camera.
-- (mbgl::CameraOptions)cameraOptionsObjectForAnimatingToCamera:(MGLMapCamera *)camera
+- (mbgl::CameraOptions)cameraOptionsObjectForAnimatingToCamera:(MGLMapCamera *)camera edgePadding:(UIEdgeInsets)insets
 {
     mbgl::CameraOptions options;
     if (CLLocationCoordinate2DIsValid(camera.centerCoordinate))
     {
         options.center = MGLLatLngFromLocationCoordinate2D(camera.centerCoordinate);
     }
-    options.padding = MGLEdgeInsetsFromNSEdgeInsets(self.contentInset);
+    options.padding = MGLEdgeInsetsFromNSEdgeInsets(insets);
     options.zoom = MGLZoomLevelForAltitude(camera.altitude, camera.pitch,
                                            camera.centerCoordinate.latitude,
                                            self.frame.size);
@@ -3051,7 +3051,6 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
             if (self.zoomLevel < self.currentMinimumZoom)
             {
                 [self setZoomLevel:self.currentMinimumZoom animated:YES];
-                _userTrackingMode = MGLUserTrackingModeFollowWithHeading; // reapply
             }
 
             if (self.userLocationAnnotationView)
@@ -3127,6 +3126,21 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
 
         if (std::abs(currentPoint.x - correctPoint.x) > 1.0 || std::abs(currentPoint.y - correctPoint.y) > 1.0)
         {
+            CLLocationDirection course = self.userLocation.location.course;
+            if (course < 0 || self.userTrackingMode != MGLUserTrackingModeFollowWithCourse)
+            {
+                course = -1;
+            }
+            
+            // Shift the center point upward or downward to accommodate a
+            // shifted user location annotation view.
+            CGRect bounds = self.bounds;
+            CGRect boundsAroundCorrectPoint = CGRectOffset(bounds,
+                                                           correctPoint.x - CGRectGetMidX(bounds),
+                                                           correctPoint.y - CGRectGetMidY(bounds));
+            UIEdgeInsets insets = UIEdgeInsetsMake(CGRectGetMinY(boundsAroundCorrectPoint) - CGRectGetMinY(bounds), 0,
+                                                   CGRectGetMaxY(bounds) - CGRectGetMaxY(boundsAroundCorrectPoint), 0);
+            
             if (self.zoomLevel >= MGLMinimumZoomLevelForUserTracking)
             {
                 // at sufficient detail, just re-center the map; don't zoom
@@ -3134,9 +3148,6 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
                 if (self.userTrackingState == MGLUserTrackingStateChanged)
                 {
                     // Ease incrementally to the new user location.
-                    UIEdgeInsets insets = UIEdgeInsetsMake(correctPoint.y, correctPoint.x,
-                                                           CGRectGetHeight(self.bounds) - correctPoint.y,
-                                                           CGRectGetWidth(self.bounds) - correctPoint.x);
                     CAMediaTimingFunction *linearFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
                     [self _setCenterCoordinate:self.userLocation.location.coordinate
                                    edgePadding:insets
@@ -3157,7 +3168,7 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
                     camera.heading = course;
                     
                     __weak MGLMapView *weakSelf = self;
-                    [self _flyToCamera:camera withDuration:animated ? -1 : 0 peakAltitude:-1 completionHandler:^{
+                    [self _flyToCamera:camera edgePadding:insets withDuration:animated ? -1 : 0 peakAltitude:-1 completionHandler:^{
                         MGLMapView *strongSelf = weakSelf;
                         strongSelf.userTrackingState = MGLUserTrackingStateChanged;
                     }];
@@ -3177,7 +3188,7 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
                                                           self.frame.size);
                 
                 __weak MGLMapView *weakSelf = self;
-                [self _flyToCamera:camera withDuration:animated ? -1 : 0 peakAltitude:-1 completionHandler:^{
+                [self _flyToCamera:camera edgePadding:insets withDuration:animated ? -1 : 0 peakAltitude:-1 completionHandler:^{
                     MGLMapView *strongSelf = weakSelf;
                     strongSelf.userTrackingState = MGLUserTrackingStateChanged;
                 }];
