@@ -9,6 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -19,15 +22,15 @@ import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PressForMarkerActivity extends AppCompatActivity implements MapboxMap.OnMapLongClickListener {
 
-    private MapView mMapView;
-    private ArrayList<MarkerOptions> mMarkerList = new ArrayList<>();
-
     private static final DecimalFormat LAT_LON_FORMATTER = new DecimalFormat("#.#####");
+    private static final String STATE_MARKER_LIST = "markerList";
 
-    private static String STATE_MARKER_LIST = "markerList";
+    private MapView mMapView;
+    private ArrayList<MarkerOptions> mMarkerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,38 +46,34 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        mMapView = new MapView(this, ApiAccess.getToken(this));
+        // Adding MapView programmatically
+        mMapView = new MapView(this);
+        mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.onCreate(savedInstanceState);
-        mMapView.setLatLng(new LatLng(45.1855569, 5.7215506));
-        mMapView.setZoom(11);
         mMapView.setOnMapLongClickListener(this);
         ((ViewGroup) findViewById(R.id.activity_container)).addView(mMapView);
 
         if (savedInstanceState != null) {
             mMarkerList = savedInstanceState.getParcelableArrayList(STATE_MARKER_LIST);
-            mMapView.addMarkers(mMarkerList);
+            if(mMarkerList!=null) {
+                mMapView.addMarkers(mMarkerList);
+            }
+        }else{
+            mMarkerList = new ArrayList<>();
         }
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.EMERALD);
+                mapboxMap.setCameraPosition(new CameraPosition(new LatLng(45.1855569, 5.7215506), 11, 0, 0));
             }
         });
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        mMapView.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_MARKER_LIST, mMarkerList);
-    }
-
-    @Override
     public void onMapLongClick(@NonNull LatLng point) {
-        final PointF pixel = mMapView.toScreenLocation(point);
-
+        PointF pixel = mMapView.toScreenLocation(point);
         String title = LAT_LON_FORMATTER.format(point.getLatitude()) + ", " + LAT_LON_FORMATTER.format(point.getLongitude());
         String snippet = "X = " + (int) pixel.x + ", Y = " + (int) pixel.y;
 
@@ -87,14 +86,29 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
         mMapView.addMarker(marker);
     }
 
-    /**
-     * Dispatch onStart() to all fragments.  Ensure any created loaders are
-     * now started.
-     */
     @Override
     protected void onStart() {
         super.onStart();
         mMapView.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mMapView.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(STATE_MARKER_LIST, mMarkerList);
     }
 
     @Override
@@ -103,33 +117,15 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
         mMapView.onStop();
     }
 
-    // Called when our app goes into the background
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        mMapView.onPause();
-    }
-
-    // Called when our app comes into the foreground
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mMapView.onResume();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
     }
 
-    // Called when the system is running low on memory
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-
         mMapView.onLowMemory();
     }
 

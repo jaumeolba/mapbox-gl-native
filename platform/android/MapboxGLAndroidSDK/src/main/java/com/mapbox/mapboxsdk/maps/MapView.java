@@ -122,10 +122,7 @@ public class MapView extends FrameLayout {
     public static final long ANIMATION_DURATION = 300;
 
     // Used for saving instance state
-    private static final String STATE_CENTER_LATLNG = "centerLatLng";
-    private static final String STATE_CENTER_DIRECTION = "centerDirection";
-    private static final String STATE_ZOOM = "zoomLevel";
-    private static final String STATE_TILT = "tilt";
+    private static final String STATE_CAMERA_POSITION = "cameraPosition";
     private static final String STATE_ZOOM_ENABLED = "zoomEnabled";
     private static final String STATE_SCROLL_ENABLED = "scrollEnabled";
     private static final String STATE_ROTATE_ENABLED = "rotateEnabled";
@@ -476,66 +473,18 @@ public class MapView extends FrameLayout {
     // Constructors
     //
 
-    /**
-     * Simple constructor to use when creating a {@link MapView} from code using the default map style.
-     *
-     * @param context     The {@link Context} of the {@link android.app.Activity}
-     *                    or {@link android.app.Fragment} the {@link MapView} is running in.
-     * @param accessToken Your public Mapbox access token. Used to load map styles and tiles.
-     */
     @UiThread
-    public MapView(@NonNull Context context, @NonNull String accessToken) {
+    public MapView(@NonNull Context context) {
         super(context);
-        if (accessToken == null) {
-            Log.w(TAG, "accessToken was null, so just returning");
-            return;
-        }
         initialize(context, null);
-        setAccessToken(accessToken);
-        setStyleUrl(null);
     }
 
-    /**
-     * Simple constructor to use when creating a {@link MapView} from code using the provided map style URL.
-     *
-     * @param context     The {@link Context} of the {@link android.app.Activity}
-     *                    or {@link android.app.Fragment} the {@link MapView} is running in.
-     * @param accessToken Your public Mapbox access token. Used to load map styles and tiles.
-     * @param styleUrl    A URL to the map style initially displayed. See {@link MapView#setStyleUrl(String)} for possible values.
-     * @see MapView#setStyleUrl(String)
-     */
-    @UiThread
-    public MapView(@NonNull Context context, @NonNull String accessToken, @NonNull String styleUrl) {
-        super(context);
-        if (accessToken == null) {
-            Log.w(TAG, "accessToken was null, so just returning");
-            return;
-        }
-        if (styleUrl == null) {
-            Log.w(TAG, "styleUrl was null, so just returning");
-            return;
-        }
-        initialize(context, null);
-        setAccessToken(accessToken);
-        setStyleUrl(styleUrl);
-    }
-
-    // Constructor that is called when inflating a view from XML.
-
-    /**
-     * Do not call from code.
-     */
     @UiThread
     public MapView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize(context, attrs);
     }
 
-    // Constructor that is called when inflating a view from XML.
-
-    /**
-     * Do not call from code.
-     */
     @UiThread
     public MapView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -638,24 +587,31 @@ public class MapView extends FrameLayout {
         // Load the attributes
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MapView, 0, 0);
         try {
-            double centerLatitude = typedArray.getFloat(R.styleable.MapView_center_latitude, 0.0f);
-            double centerLongitude = typedArray.getFloat(R.styleable.MapView_center_longitude, 0.0f);
-            setLatLng(new LatLng(centerLatitude, centerLongitude));
-
-            // need to set zoom level first because of limitation on rotating when zoomed out
+            // get data to create a CameraPosition object
+            double lat = typedArray.getFloat(R.styleable.MapView_center_latitude, 0.0f);
+            double lng = typedArray.getFloat(R.styleable.MapView_center_longitude, 0.0f);
+            LatLng position = new LatLng(lat, lng);
             float zoom = typedArray.getFloat(R.styleable.MapView_zoom, 0.0f);
-            if (zoom != 0.0f) {
-                setZoom(zoom);
-            } else {
-                setZoomLevel(typedArray.getFloat(R.styleable.MapView_zoom_level, 0.0f));
+            if (zoom == 0.0f) {
+                // user is using old zoom level object
+                zoom = typedArray.getFloat(R.styleable.MapView_zoom_level, 0.0f);
             }
+            float bearing = typedArray.getFloat(R.styleable.MapView_direction, 0.0f);
+            float tilt = typedArray.getFloat(R.styleable.MapView_tilt, 0.0f);
+            CameraPosition cameraPosition = new CameraPosition(
+                    position,
+                    zoom,
+                    tilt,
+                    bearing);
 
-            setDirection(typedArray.getFloat(R.styleable.MapView_direction, 0.0f));
+            mMapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
             mMapboxMap.setZoomEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_enabled, true));
             mMapboxMap.setScrollEnabled(typedArray.getBoolean(R.styleable.MapView_scroll_enabled, true));
             mMapboxMap.setRotateEnabled(typedArray.getBoolean(R.styleable.MapView_rotate_enabled, true));
             mMapboxMap.setTiltEnabled(typedArray.getBoolean(R.styleable.MapView_tilt_enabled, true));
             mMapboxMap.setZoomControlsEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_controls_enabled, mMapboxMap.isZoomControlsEnabled()));
+
             setDebugActive(typedArray.getBoolean(R.styleable.MapView_debug_active, false));
             if (typedArray.getString(R.styleable.MapView_style_url) != null) {
                 setStyleUrl(typedArray.getString(R.styleable.MapView_style_url));
@@ -719,11 +675,11 @@ public class MapView extends FrameLayout {
     @UiThread
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            setLatLng((LatLng) savedInstanceState.getParcelable(STATE_CENTER_LATLNG));
-            // need to set zoom level first because of limitation on rotating when zoomed out
-            setZoom(savedInstanceState.getDouble(STATE_ZOOM));
-            setDirection(savedInstanceState.getDouble(STATE_CENTER_DIRECTION));
-            setTilt(savedInstanceState.getDouble(STATE_TILT), null);
+
+            // Get previous camera position
+            CameraPosition cameraPosition = savedInstanceState.getParcelable(STATE_CAMERA_POSITION);
+            mMapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
             mMapboxMap.setZoomEnabled(savedInstanceState.getBoolean(STATE_ZOOM_ENABLED));
             mMapboxMap.setScrollEnabled(savedInstanceState.getBoolean(STATE_SCROLL_ENABLED));
             mMapboxMap.setRotateEnabled(savedInstanceState.getBoolean(STATE_ROTATE_ENABLED));
@@ -802,11 +758,7 @@ public class MapView extends FrameLayout {
 
     @UiThread
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelable(STATE_CENTER_LATLNG, getLatLng());
-        // need to set zoom level first because of limitation on rotating when zoomed out
-        outState.putDouble(STATE_ZOOM, getZoom());
-        outState.putDouble(STATE_CENTER_DIRECTION, getDirection());
-        outState.putDouble(STATE_TILT, getTilt());
+        outState.putParcelable(STATE_CAMERA_POSITION, mMapboxMap.getCameraPosition());
         outState.putBoolean(STATE_ZOOM_ENABLED, mMapboxMap.isZoomEnabled());
         outState.putBoolean(STATE_SCROLL_ENABLED, mMapboxMap.isScrollEnabled());
         outState.putBoolean(STATE_ROTATE_ENABLED, mMapboxMap.isRotateEnabled());
@@ -909,137 +861,6 @@ public class MapView extends FrameLayout {
     @UiThread
     public void onLowMemory() {
         mNativeMapView.onLowMemory();
-    }
-
-    //
-    // Position
-    //
-
-    /**
-     * Returns the current {@link LatLng} at the center of the map view.
-     *
-     * @return The current center.
-     */
-    @UiThread
-    @NonNull
-    public LatLng getLatLng() {
-        return mNativeMapView.getLatLng();
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new {@link LatLng} immediately without changing the zoom level.
-     * </p>
-     * <p>
-     * The initial {@link LatLng} is (0, 0).
-     * </p>
-     * If you want to animate the change, use {@link MapView#setLatLng(LatLng, boolean)}.
-     *
-     * @param latLng The new center.
-     * @see MapView#setLatLng(LatLng, boolean)
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLng latLng) {
-        setLatLng(latLng, false);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new {@link LatLng} without changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial {@link LatLng} is (0, 0).
-     *
-     * @param latLng   The new center.
-     * @param animated If true, animates the change. If false, immediately changes the map.
-     */
-    @UiThread
-    public void setLatLng(@NonNull LatLng latLng, boolean animated) {
-        if (latLng == null) {
-            Log.w(TAG, "latLng was null, so just returning");
-            return;
-        }
-
-        if (animated) {
-            CameraPosition cameraPosition = new CameraPosition.Builder(getCameraPosition())
-                    .target(latLng)
-                    .build();
-            animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    (int) ANIMATION_DURATION, null);
-        } else {
-            jumpTo(mNativeMapView.getBearing(), latLng, mNativeMapView.getPitch(), mNativeMapView.getZoom());
-        }
-    }
-
-    /**
-     * Returns the current coordinate at the center of the map view.
-     *
-     * @return The current coordinate.
-     * @deprecated use {@link #getLatLng()} instead.
-     */
-    @UiThread
-    @NonNull
-    @Deprecated
-    public LatLng getCenterCoordinate() {
-        return mNativeMapView.getLatLng();
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate immediately without changing the zoom level.
-     * </p>
-     * <p>
-     * The initial coordinate is (0, 0).
-     * </p>
-     * If you want to animate the change, use {@link MapView#setCenterCoordinate(LatLng, boolean)}.
-     *
-     * @param centerCoordinate The new coordinate.
-     * @see MapView#setCenterCoordinate(LatLng, boolean)
-     * @deprecated use {@link #setLatLng(LatLng)}} instead.
-     */
-    @UiThread
-    @Deprecated
-    public void setCenterCoordinate(@NonNull LatLng centerCoordinate) {
-        setCenterCoordinate(centerCoordinate, false);
-    }
-
-    /**
-     * <p>
-     * Centers the map on a new coordinate without changing the zoom level and optionally animates the change.
-     * </p>
-     * The initial coordinate is (0, 0).
-     *
-     * @param centerCoordinate The new coordinate.
-     * @param animated         If true, animates the change. If false, immediately changes the map.
-     * @deprecated use {@link #setLatLng(LatLng, boolean)}} instead.
-     */
-    @UiThread
-    @Deprecated
-    public void setCenterCoordinate(@NonNull LatLng centerCoordinate, boolean animated) {
-        if (centerCoordinate == null) {
-            Log.w(TAG, "centerCoordinate was null, so just returning");
-            return;
-        }
-
-        if (animated) {
-            CameraPosition cameraPosition = new CameraPosition.Builder(getCameraPosition())
-                    .target(centerCoordinate)
-                    .build();
-            animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    (int) ANIMATION_DURATION, null);
-        } else {
-            jumpTo(mNativeMapView.getBearing(), centerCoordinate, mNativeMapView.getPitch(), mNativeMapView.getZoom());
-        }
-    }
-
-
-    /**
-     * Resets the map to the minimum zoom level, a center coordinate of (0, 0), a true north heading,
-     * and animates the change.
-     */
-    @UiThread
-    public void resetPosition() {
-        mNativeMapView.cancelTransitions();
-        mNativeMapView.resetPosition();
     }
 
     //
@@ -1340,16 +1161,6 @@ public class MapView extends FrameLayout {
     //
 
     /**
-     * Gets the current position of the camera.
-     * The CameraPosition returned is a snapshot of the current position, and will not automatically update when the camera moves.
-     *
-     * @return The current position of the Camera.
-     */
-    final CameraPosition getCameraPosition() {
-        return new CameraPosition(getLatLng(), (float) getZoom(), (float) getTilt(), (float) getBearing());
-    }
-
-    /**
      * Animates the movement of the camera from the current position to the position defined in the update.
      * During the animation, a call to getCameraPosition() returns an intermediate location of the camera.
      * <p/>
@@ -1361,7 +1172,6 @@ public class MapView extends FrameLayout {
     final void animateCamera(CameraUpdate update) {
         animateCamera(update, 1, null);
     }
-
 
     /**
      * Animates the movement of the camera from the current position to the position defined in the update and calls an optional callback on completion.
@@ -1386,7 +1196,6 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     final void animateCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
-
         if (update.getTarget() == null) {
             Log.w(TAG, "animateCamera with null target coordinate passed in.  Will immediately return without animating camera.");
             return;
@@ -3808,7 +3617,7 @@ public class MapView extends FrameLayout {
             Context context = ((Dialog) dialog).getContext();
             String url = context.getResources().getStringArray(R.array.attribution_links)[which];
             if (which == ATTRIBUTION_INDEX_IMPROVE_THIS_MAP) {
-                LatLng latLng = mMapView.getLatLng();
+                LatLng latLng = mMapView.getMapboxMap().getCameraPosition().target;
                 url = String.format(url, latLng.getLongitude(), latLng.getLatitude(), (int) mMapView.getZoom());
             }
             Intent intent = new Intent(Intent.ACTION_VIEW);

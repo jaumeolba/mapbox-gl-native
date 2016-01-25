@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -516,8 +517,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onMyLocationChange(@Nullable Location location) {
                         if (location != null) {
-                            mMapView.setZoom(16);
-                            mMapView.setLatLng(new LatLng(location));
+                            mMapboxMap.setCameraPosition(new CameraPosition(new LatLng(location),16,0,0));
                             mMapboxMap.setOnMyLocationChangeListener(null);
                         }
                     }
@@ -545,8 +545,8 @@ public class MainActivity extends AppCompatActivity {
                 addMarkers();
                 addPolyline();
                 addPolygon();
-                mMapView.setZoom(7);
-                mMapView.setLatLng(new LatLng(38.11727, -122.22839));
+                mMapboxMap.setCameraPosition(
+                        new CameraPosition(new LatLng(38.11727, -122.22839),7,0,0));
             }
         } else {
             if (mIsAnnotationsOn) {
@@ -566,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
         final MarkerOptions cheeseRoom = generateMarker("Cheese Room", "The only air conditioned room on the property", dogIcon, 38.531577, -122.010646);
         markerOptionsList.add(cheeseRoom);
 
-        List<Marker> markers = mMapView.addMarkers(markerOptionsList);
+        mMapView.addMarkers(markerOptionsList);
     }
 
     private MarkerOptions generateMarker(String title, String snippet, Icon icon, double lat, double lng) {

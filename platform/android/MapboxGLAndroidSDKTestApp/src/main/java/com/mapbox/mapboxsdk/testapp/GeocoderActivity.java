@@ -12,6 +12,7 @@ import com.mapbox.geocoder.GeocoderCriteria;
 import com.mapbox.geocoder.MapboxGeocoder;
 import com.mapbox.geocoder.service.models.GeocoderFeature;
 import com.mapbox.geocoder.service.models.GeocoderResponse;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -29,6 +30,7 @@ import retrofit.Retrofit;
 public class GeocoderActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "GeocoderActivity";
+    private static final LatLng DC_DUPONT_CIRCLE = new LatLng(38.90962, -77.04341);
 
     private MapView mapView;
     private TextView textView;
@@ -50,14 +52,9 @@ public class GeocoderActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.message);
         setMessage("Tap the map to trigger the geocoder.");
 
-        LatLng dupontCircle = new LatLng(38.90962, -77.04341);
-
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.setAccessToken(ApiAccess.getToken(this));
-        mapView.setCenterCoordinate(dupontCircle);
-        mapView.setZoomLevel(15);
         mapView.onCreate(savedInstanceState);
-
         mapView.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
@@ -74,6 +71,7 @@ public class GeocoderActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.EMERALD);
+                mapboxMap.setCameraPosition(new CameraPosition(DC_DUPONT_CIRCLE, 15, 0, 0));
             }
         });
     }
@@ -91,7 +89,7 @@ public class GeocoderActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause()  {
+    public void onPause() {
         super.onPause();
         mapView.onPause();
     }

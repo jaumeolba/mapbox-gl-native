@@ -2,6 +2,7 @@ package com.mapbox.mapboxsdk.testapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +16,11 @@ import com.mapbox.directions.service.models.DirectionsRoute;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -30,6 +35,7 @@ public class DirectionsActivity extends AppCompatActivity {
     private final static String LOG_TAG = "DirectionsActivity";
 
     private MapView mMapView;
+    private MapboxMap mMapboxMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +54,13 @@ public class DirectionsActivity extends AppCompatActivity {
         mMapView = (MapView) findViewById(R.id.mapView);
         mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.onCreate(savedInstanceState);
-
-        // load routes async
-        loadRoute();
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mMapboxMap = mapboxMap;
+                loadRoute();
+            }
+        });
     }
 
     private void loadRoute() {
@@ -64,15 +74,15 @@ public class DirectionsActivity extends AppCompatActivity {
         LatLng centroid = new LatLng(
                 (origin.getLatitude() + destination.getLatitude()) / 2,
                 (origin.getLongitude() + destination.getLongitude()) / 2);
-        mMapView.setCenterCoordinate(centroid);
-        mMapView.setZoomLevel(14);
+
+        mMapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 14, 0, 0)));
 
         // Add origin and destination to the map
-        mMapView.addMarker(new MarkerOptions()
+        mMapboxMap.addMarker(new MarkerOptions()
                 .position(new LatLng(origin.getLatitude(), origin.getLongitude()))
                 .title("Origin")
                 .snippet("Dupont Circle"));
-        mMapView.addMarker(new MarkerOptions()
+        mMapboxMap.addMarker(new MarkerOptions()
                 .position(new LatLng(destination.getLatitude(), destination.getLongitude()))
                 .title("Destination")
                 .snippet("The White House"));
@@ -121,7 +131,7 @@ public class DirectionsActivity extends AppCompatActivity {
         }
 
         // Draw Points on MapView
-        mMapView.addPolyline(new PolylineOptions()
+        mMapboxMap.addPolyline(new PolylineOptions()
                 .add(point)
                 .color(Color.parseColor("#3887be"))
                 .width(5));

@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -20,6 +22,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 public class CoordinateChangeActivity extends AppCompatActivity {
 
     private MapView mMapView;
+    private MapboxMap mMapboxMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +42,26 @@ public class CoordinateChangeActivity extends AppCompatActivity {
         mMapView.setTag(true);
         mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.onCreate(savedInstanceState);
-        mMapView.setLatLng(new LatLng(38.87031, -77.00897));
-        mMapView.setZoom(16);
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mMapboxMap = mapboxMap;
+                mapboxMap.setStyle(Style.MAPBOX_STREETS);
+                mapboxMap.setCompassEnabled(false);
+                mapboxMap.setCameraPosition(new CameraPosition(new LatLng(38.87031, -77.00897), 16, 0, 0));
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setColorFilter(ContextCompat.getColor(this, R.color.primary));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMapView.setLatLng(getNextLatLng(), true);
-            }
-        });
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                mapboxMap.setStyle(Style.MAPBOX_STREETS);
-                mapboxMap.setCompassEnabled(false);
+                if (mMapboxMap != null) {
+                    mMapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                            new CameraPosition(getNextLatLng(), 16, 0, 0)));
+                }
             }
         });
     }

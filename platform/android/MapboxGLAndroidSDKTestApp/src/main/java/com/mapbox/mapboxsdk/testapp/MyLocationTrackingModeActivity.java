@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
@@ -106,7 +107,7 @@ public class MyLocationTrackingModeActivity extends AppCompatActivity implements
         if (location != null) {
             if (mLocation == null) {
                 // initial location to reposition map
-                mMapView.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                mMapboxMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                 mLocationSpinner.setEnabled(true);
                 mBearingSpinner.setEnabled(true);
             }

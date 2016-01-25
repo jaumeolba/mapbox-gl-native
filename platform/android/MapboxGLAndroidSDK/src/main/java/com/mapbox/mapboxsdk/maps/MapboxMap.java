@@ -39,6 +39,8 @@ public class MapboxMap {
 
     private String mStyleUrl;
 
+    private CameraPosition mCurrentCameraPosition;
+
     private boolean mMyLocationEnabled;
 
     private boolean mCompassEnabled;
@@ -423,7 +425,7 @@ public class MapboxMap {
     //
 
     public void setCameraPosition(CameraPosition cameraPosition){
-        mMapView.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     /**
@@ -433,7 +435,7 @@ public class MapboxMap {
      * @return The current position of the Camera.
      */
     public final CameraPosition getCameraPosition() {
-        return mMapView.getCameraPosition();
+        return mCurrentCameraPosition;
     }
 
     /**
@@ -446,7 +448,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update) {
-        mMapView.animateCamera(update, 1, null);
+        animateCamera(update, 1, null);
     }
 
     /**
@@ -459,7 +461,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
-        mMapView.animateCamera(update, 1, callback);
+        animateCamera(update, 1, callback);
     }
 
     /**
@@ -471,7 +473,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update, int durationMs) {
-        mMapView.animateCamera(update, durationMs, null);
+        animateCamera(update, durationMs, null);
     }
 
     /**
@@ -484,6 +486,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
+        mCurrentCameraPosition = new CameraPosition(update.getTarget(),update.getZoom(),update.getTilt(),update.getBearing());
         mMapView.animateCamera(update, durationMs, callback);
     }
 
@@ -497,6 +500,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void easeCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
+        mCurrentCameraPosition = new CameraPosition(update.getTarget(),update.getZoom(),update.getTilt(),update.getBearing());
         mMapView.easeCamera(update, durationMs, callback);
     }
 
@@ -509,6 +513,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void moveCamera(CameraUpdate update) {
+        mCurrentCameraPosition = new CameraPosition(update.getTarget(),update.getZoom(),update.getTilt(),update.getBearing());
         mMapView.moveCamera(update);
     }
 

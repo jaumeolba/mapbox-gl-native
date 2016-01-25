@@ -248,7 +248,7 @@ public final class UserLocationView extends View {
         if (myLocationTrackingMode != MyLocationTracking.TRACKING_NONE && mUserLocation != null) {
             // center map directly if we have a location fix
             mMarkerCoordinate = new LatLng(mUserLocation.getLatitude(), mUserLocation.getLongitude());
-            mMapView.setLatLng(new LatLng(mUserLocation));
+            mMapView.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mUserLocation)));
 
             // center view directly
             mMarkerScreenMatrix.reset();
@@ -294,7 +294,7 @@ public final class UserLocationView extends View {
                 }
 
                 if (mCurrentMapViewCoordinate == null) {
-                    mCurrentMapViewCoordinate = mMapView.getLatLng();
+                    mCurrentMapViewCoordinate = mMapView.getMapboxMap().getCameraPosition().target;
                 }
 
                 // only update if there is an actual change
