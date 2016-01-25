@@ -71,7 +71,7 @@ public class DoubleMapActivity extends AppCompatActivity {
             mMapViewMini.setLogoVisibility(View.GONE);
             mMapViewMini.setCompassEnabled(false);
             mMapViewMini.setZoom(4);
-            mMapViewMini.setAllGesturesEnabled(false);
+//fixme            mMapViewMini.setAllGesturesEnabled(false);
 
             try {
                 mMapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);

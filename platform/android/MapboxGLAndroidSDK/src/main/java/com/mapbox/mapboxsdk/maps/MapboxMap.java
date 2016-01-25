@@ -38,6 +38,13 @@ public class MapboxMap {
 
     private MapView mMapView;
 
+    private boolean mCompassEnabled;
+    private boolean mZoomEnabled = true;
+    private boolean mScrollEnabled = true;
+    private boolean mZoomControlsEnabled;
+    private boolean mRotateEnabled = true;
+    private boolean mTiltEnabled =true;
+
     //
     // Interfaces
     //
@@ -263,7 +270,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isScrollEnabled() {
-        return mMapView.isScrollEnabled();
+        return mScrollEnabled;
     }
 
     /**
@@ -280,7 +287,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setScrollEnabled(boolean scrollEnabled) {
-        mMapView.setScrollEnabled(scrollEnabled);
+        mScrollEnabled = scrollEnabled;
     }
 
     //
@@ -294,7 +301,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isRotateEnabled() {
-        return mMapView.isRotateEnabled();
+        return mRotateEnabled;
     }
 
     /**
@@ -311,7 +318,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setRotateEnabled(boolean rotateEnabled) {
-        mMapView.setRotateEnabled(rotateEnabled);
+        mRotateEnabled = rotateEnabled;
     }
 
     //
@@ -325,7 +332,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isZoomEnabled() {
-        return mMapView.isZoomEnabled();
+        return mZoomEnabled;
     }
 
     /**
@@ -342,6 +349,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setZoomEnabled(boolean zoomEnabled) {
+        mZoomEnabled = zoomEnabled;
         mMapView.setZoomEnabled(true);
     }
 
@@ -355,7 +363,7 @@ public class MapboxMap {
      * @return If true, the zoom controls are enabled.
      */
     public boolean isZoomControlsEnabled() {
-        return mMapView.isZoomEnabled();
+        return mZoomControlsEnabled;
     }
 
     /**
@@ -371,6 +379,7 @@ public class MapboxMap {
      * @param enabled If true, the zoom controls are enabled.
      */
     public void setZoomControlsEnabled(boolean enabled) {
+        mZoomControlsEnabled = enabled;
         mMapView.setZoomControlsEnabled(enabled);
     }
 
@@ -385,7 +394,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isTiltEnabled() {
-        return mMapView.isTiltEnabled();
+        return mTiltEnabled;
     }
 
     /**
@@ -402,7 +411,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setTiltEnabled(boolean tiltEnabled) {
-        mMapView.setTiltEnabled(tiltEnabled);
+        mTiltEnabled = tiltEnabled;
     }
 
     //
@@ -898,13 +907,16 @@ public class MapboxMap {
      * The default value is true.
      *
      * @param enabled If true, all gestures are available; otherwise, all gestures are disabled.
-     * @see MapView#setZoomEnabled(boolean)
-     * @see MapView#setScrollEnabled(boolean)
-     * @see MapView#setRotateEnabled(boolean)
-     * @see MapView#setTiltEnabled(boolean)
+     * @see MapboxMap#setZoomEnabled(boolean)
+     * @see MapboxMap#setScrollEnabled(boolean)
+     * @see MapboxMap#setRotateEnabled(boolean)
+     * @see MapboxMap#setTiltEnabled(boolean)
      */
     public void setAllGesturesEnabled(boolean enabled) {
-        mMapView.setAllGesturesEnabled(enabled);
+        setZoomEnabled(enabled);
+        setScrollEnabled(enabled);
+        setRotateEnabled(enabled);
+        setTiltEnabled(enabled);
     }
 
     //
@@ -1211,7 +1223,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isCompassEnabled() {
-        return mMapView.isCompassEnabled();
+        return mCompassEnabled;
     }
 
     /**
@@ -1227,6 +1239,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setCompassEnabled(boolean compassEnabled) {
+        mCompassEnabled = compassEnabled;
         mMapView.setCompassEnabled(compassEnabled);
     }
 

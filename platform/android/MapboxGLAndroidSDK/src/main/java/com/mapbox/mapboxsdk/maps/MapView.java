@@ -112,7 +112,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @see MapView#setAccessToken(String)
  */
-public final class MapView extends FrameLayout {
+public class MapView extends FrameLayout {
 
     //
     // Static members
@@ -221,7 +221,6 @@ public final class MapView extends FrameLayout {
 
     // Shows zoom buttons
     private ZoomButtonsController mZoomButtonsController;
-    private boolean mZoomControlsEnabled = false;
 
     // Used to track trackball long presses
     private TrackballLongPressTimeOut mCurrentTrackballLongPressTimeOut;
@@ -277,10 +276,6 @@ public final class MapView extends FrameLayout {
     //
 
     // These are properties with setters/getters, saved in onSaveInstanceState and XML attributes
-    private boolean mZoomEnabled = true;
-    private boolean mScrollEnabled = true;
-    private boolean mRotateEnabled = true;
-    private boolean mTiltEnabled = true;
     private boolean mAllowConcurrentMultipleOpenInfoWindows = false;
     private String mStyleUrl;
 
@@ -625,7 +620,7 @@ public final class MapView extends FrameLayout {
         // Shows the zoom controls
         if (!context.getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN_MULTITOUCH)) {
-            mZoomControlsEnabled = true;
+            mMapboxMap.setZoomControlsEnabled(true);
         }
         mZoomButtonsController = new ZoomButtonsController(this);
         mZoomButtonsController.setZoomSpeed(ANIMATION_DURATION);
@@ -662,18 +657,18 @@ public final class MapView extends FrameLayout {
 
             // need to set zoom level first because of limitation on rotating when zoomed out
             float zoom = typedArray.getFloat(R.styleable.MapView_zoom, 0.0f);
-            if(zoom != 0.0f){
+            if (zoom != 0.0f) {
                 setZoom(zoom);
-            }else{
+            } else {
                 setZoomLevel(typedArray.getFloat(R.styleable.MapView_zoom_level, 0.0f));
             }
 
             setDirection(typedArray.getFloat(R.styleable.MapView_direction, 0.0f));
-            setZoomEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_enabled, true));
-            setScrollEnabled(typedArray.getBoolean(R.styleable.MapView_scroll_enabled, true));
-            setRotateEnabled(typedArray.getBoolean(R.styleable.MapView_rotate_enabled, true));
-            setTiltEnabled(typedArray.getBoolean(R.styleable.MapView_tilt_enabled, true));
-            setZoomControlsEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_controls_enabled, isZoomControlsEnabled()));
+            mMapboxMap.setZoomEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_enabled, true));
+            mMapboxMap.setScrollEnabled(typedArray.getBoolean(R.styleable.MapView_scroll_enabled, true));
+            mMapboxMap.setRotateEnabled(typedArray.getBoolean(R.styleable.MapView_rotate_enabled, true));
+            mMapboxMap.setTiltEnabled(typedArray.getBoolean(R.styleable.MapView_tilt_enabled, true));
+            mMapboxMap.setZoomControlsEnabled(typedArray.getBoolean(R.styleable.MapView_zoom_controls_enabled, mMapboxMap.isZoomControlsEnabled()));
             setDebugActive(typedArray.getBoolean(R.styleable.MapView_debug_active, false));
             if (typedArray.getString(R.styleable.MapView_style_url) != null) {
                 setStyleUrl(typedArray.getString(R.styleable.MapView_style_url));
@@ -718,9 +713,9 @@ public final class MapView extends FrameLayout {
 
             // User location
             try {
-               //noinspection ResourceType
-               setMyLocationEnabled(typedArray.getBoolean(R.styleable.MapView_my_location_enabled, false));
-            }catch (SecurityException ignore){
+                //noinspection ResourceType
+                setMyLocationEnabled(typedArray.getBoolean(R.styleable.MapView_my_location_enabled, false));
+            } catch (SecurityException ignore) {
                 // User did not accept location permissions
             }
 
@@ -752,11 +747,11 @@ public final class MapView extends FrameLayout {
             setZoom(savedInstanceState.getDouble(STATE_ZOOM));
             setDirection(savedInstanceState.getDouble(STATE_CENTER_DIRECTION));
             setTilt(savedInstanceState.getDouble(STATE_TILT), null);
-            setZoomEnabled(savedInstanceState.getBoolean(STATE_ZOOM_ENABLED));
-            setScrollEnabled(savedInstanceState.getBoolean(STATE_SCROLL_ENABLED));
-            setRotateEnabled(savedInstanceState.getBoolean(STATE_ROTATE_ENABLED));
-            setTiltEnabled(savedInstanceState.getBoolean(STATE_TILT_ENABLED));
-            setZoomControlsEnabled(savedInstanceState.getBoolean(STATE_ZOOM_CONTROLS_ENABLED));
+            mMapboxMap.setZoomEnabled(savedInstanceState.getBoolean(STATE_ZOOM_ENABLED));
+            mMapboxMap.setScrollEnabled(savedInstanceState.getBoolean(STATE_SCROLL_ENABLED));
+            mMapboxMap.setRotateEnabled(savedInstanceState.getBoolean(STATE_ROTATE_ENABLED));
+            mMapboxMap.setTiltEnabled(savedInstanceState.getBoolean(STATE_TILT_ENABLED));
+            mMapboxMap.setZoomControlsEnabled(savedInstanceState.getBoolean(STATE_ZOOM_CONTROLS_ENABLED));
             setDebugActive(savedInstanceState.getBoolean(STATE_DEBUG_ACTIVE));
             setStyleUrl(savedInstanceState.getString(STATE_STYLE_URL));
             setAccessToken(savedInstanceState.getString(STATE_ACCESS_TOKEN));
@@ -771,7 +766,7 @@ public final class MapView extends FrameLayout {
             try {
                 //noinspection ResourceType
                 setMyLocationEnabled(savedInstanceState.getBoolean(STATE_MY_LOCATION_ENABLED));
-            }catch (SecurityException ignore){
+            } catch (SecurityException ignore) {
                 // User did not accept location permissions
             }
 
@@ -833,21 +828,16 @@ public final class MapView extends FrameLayout {
      */
     @UiThread
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (outState == null) {
-            Log.w(TAG, "outState was null, so just returning");
-            return;
-        }
-
         outState.putParcelable(STATE_CENTER_LATLNG, getLatLng());
         // need to set zoom level first because of limitation on rotating when zoomed out
         outState.putDouble(STATE_ZOOM, getZoom());
         outState.putDouble(STATE_CENTER_DIRECTION, getDirection());
         outState.putDouble(STATE_TILT, getTilt());
-        outState.putBoolean(STATE_ZOOM_ENABLED, isZoomEnabled());
-        outState.putBoolean(STATE_SCROLL_ENABLED, isScrollEnabled());
-        outState.putBoolean(STATE_ROTATE_ENABLED, isRotateEnabled());
-        outState.putBoolean(STATE_TILT_ENABLED, isTiltEnabled());
-        outState.putBoolean(STATE_ZOOM_CONTROLS_ENABLED, isZoomControlsEnabled());
+        outState.putBoolean(STATE_ZOOM_ENABLED, mMapboxMap.isZoomEnabled());
+        outState.putBoolean(STATE_SCROLL_ENABLED, mMapboxMap.isScrollEnabled());
+        outState.putBoolean(STATE_ROTATE_ENABLED, mMapboxMap.isRotateEnabled());
+        outState.putBoolean(STATE_TILT_ENABLED, mMapboxMap.isTiltEnabled());
+        outState.putBoolean(STATE_ZOOM_CONTROLS_ENABLED, mMapboxMap.isZoomControlsEnabled());
         outState.putBoolean(STATE_DEBUG_ACTIVE, isDebugActive());
         outState.putString(STATE_STYLE_URL, getStyleUrl());
         outState.putString(STATE_ACCESS_TOKEN, getAccessToken());
@@ -986,8 +976,8 @@ public final class MapView extends FrameLayout {
      * </p>
      * The initial {@link LatLng} is (0, 0).
      *
-     * @param latLng    The new center.
-     * @param animated  If true, animates the change. If false, immediately changes the map.
+     * @param latLng   The new center.
+     * @param animated If true, animates the change. If false, immediately changes the map.
      */
     @UiThread
     public void setLatLng(@NonNull LatLng latLng, boolean animated) {
@@ -1077,33 +1067,6 @@ public final class MapView extends FrameLayout {
     public void resetPosition() {
         mNativeMapView.cancelTransitions();
         mNativeMapView.resetPosition();
-    }
-
-    /**
-     * Returns whether the user may scroll around the map.
-     *
-     * @return If true, scrolling is enabled.
-     */
-    @UiThread
-    public boolean isScrollEnabled() {
-        return mScrollEnabled;
-    }
-
-    /**
-     * <p>
-     * Changes whether the user may scroll around the map.
-     * </p>
-     * <p>
-     * This setting controls only user interactions with the map. If you set the value to false,
-     * you may still change the map location programmatically.
-     * </p>
-     * The default value is true.
-     *
-     * @param scrollEnabled If true, scrolling is enabled.
-     */
-    @UiThread
-    public void setScrollEnabled(boolean scrollEnabled) {
-        this.mScrollEnabled = scrollEnabled;
     }
 
     //
@@ -1211,33 +1174,6 @@ public final class MapView extends FrameLayout {
     public void resetNorth() {
         mNativeMapView.cancelTransitions();
         mNativeMapView.resetNorth();
-    }
-
-    /**
-     * Returns whether the user may rotate the map.
-     *
-     * @return If true, rotating is enabled.
-     */
-    @UiThread
-    public boolean isRotateEnabled() {
-        return mRotateEnabled;
-    }
-
-    /**
-     * <p>
-     * Changes whether the user may rotate the map.
-     * </p>
-     * <p>
-     * This setting controls only user interactions with the map. If you set the value to false,
-     * you may still change the map location programmatically.
-     * </p>
-     * The default value is true.
-     *
-     * @param rotateEnabled If true, rotating is enabled.
-     */
-    @UiThread
-    public void setRotateEnabled(boolean rotateEnabled) {
-        this.mRotateEnabled = rotateEnabled;
     }
 
     //
@@ -1370,16 +1306,6 @@ public final class MapView extends FrameLayout {
     }
 
     /**
-     * Returns whether the user may zoom the map.
-     *
-     * @return If true, zooming is enabled.
-     */
-    @UiThread
-    public boolean isZoomEnabled() {
-        return mZoomEnabled;
-    }
-
-    /**
      * <p>
      * Changes whether the user may zoom the map.
      * </p>
@@ -1393,22 +1319,11 @@ public final class MapView extends FrameLayout {
      */
     @UiThread
     public void setZoomEnabled(boolean zoomEnabled) {
-        this.mZoomEnabled = zoomEnabled;
-
-        if (mZoomControlsEnabled && (getVisibility() == View.VISIBLE) && mZoomEnabled) {
+        if (mMapboxMap.isZoomControlsEnabled() && (getVisibility() == View.VISIBLE) && zoomEnabled) {
             mZoomButtonsController.setVisible(true);
         } else {
             mZoomButtonsController.setVisible(false);
         }
-    }
-
-    /**
-     * Gets whether the zoom controls are enabled.
-     *
-     * @return If true, the zoom controls are enabled.
-     */
-    public boolean isZoomControlsEnabled() {
-        return mZoomControlsEnabled;
     }
 
     /**
@@ -1424,9 +1339,7 @@ public final class MapView extends FrameLayout {
      * @param enabled If true, the zoom controls are enabled.
      */
     public void setZoomControlsEnabled(boolean enabled) {
-        mZoomControlsEnabled = enabled;
-
-        if (mZoomControlsEnabled && (getVisibility() == View.VISIBLE) && mZoomEnabled) {
+        if (enabled && (getVisibility() == View.VISIBLE) && mMapboxMap.isZoomEnabled()) {
             mZoomButtonsController.setVisible(true);
         } else {
             mZoomButtonsController.setVisible(false);
@@ -1448,38 +1361,6 @@ public final class MapView extends FrameLayout {
             mNativeMapView.scaleBy(0.5, x / mScreenDensity, y / mScreenDensity, ANIMATION_DURATION);
         }
     }
-
-    //
-    // Tilt
-    //
-
-    /**
-     * Returns whether the user may tilt the map.
-     *
-     * @return If true, tilting is enabled.
-     */
-    @UiThread
-    public boolean isTiltEnabled() {
-        return mTiltEnabled;
-    }
-
-    /**
-     * <p>
-     * Changes whether the user may tilt the map.
-     * </p>
-     * <p>
-     * This setting controls only user interactions with the map. If you set the value to false,
-     * you may still change the map location programmatically.
-     * </p>
-     * The default value is true.
-     *
-     * @param tiltEnabled If true, tilting is enabled.
-     */
-    @UiThread
-    public void setTiltEnabled(boolean tiltEnabled) {
-        this.mTiltEnabled = tiltEnabled;
-    }
-
 
     //
     // Camera API
@@ -2763,7 +2644,7 @@ public final class MapView extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // Required by ZoomButtonController (from Android SDK documentation)
-        if (mZoomControlsEnabled) {
+        if (mMapboxMap.isZoomControlsEnabled()) {
             mZoomButtonsController.setVisible(false);
         }
     }
@@ -2772,11 +2653,10 @@ public final class MapView extends FrameLayout {
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         // Required by ZoomButtonController (from Android SDK documentation)
-        if (mZoomControlsEnabled && (visibility != View.VISIBLE)) {
+        if (mMapboxMap.isZoomControlsEnabled() && (visibility != View.VISIBLE)) {
             mZoomButtonsController.setVisible(false);
         }
-        if (mZoomControlsEnabled && (visibility == View.VISIBLE)
-                && mZoomEnabled) {
+        if (mMapboxMap.isZoomControlsEnabled() && (visibility == View.VISIBLE) && mMapboxMap.isZoomEnabled()) {
             mZoomButtonsController.setVisible(true);
         }
     }
@@ -2784,29 +2664,6 @@ public final class MapView extends FrameLayout {
     //
     // Touch events
     //
-
-    /**
-     * <p>
-     * Sets the preference for whether all gestures should be enabled or disabled.
-     * </p>
-     * <p>
-     * This setting controls only user interactions with the map. If you set the value to false,
-     * you may still change the map location programmatically.
-     * </p>
-     * The default value is true.
-     *
-     * @param enabled If true, all gestures are available; otherwise, all gestures are disabled.
-     * @see MapView#setZoomEnabled(boolean)
-     * @see MapView#setScrollEnabled(boolean)
-     * @see MapView#setRotateEnabled(boolean)
-     * @see MapView#setTiltEnabled(boolean)
-     */
-    public void setAllGesturesEnabled(boolean enabled) {
-        setZoomEnabled(enabled);
-        setScrollEnabled(enabled);
-        setRotateEnabled(enabled);
-        setTiltEnabled(enabled);
-    }
 
     // Called when user touches the screen, all positions are absolute
     @Override
@@ -2876,7 +2733,7 @@ public final class MapView extends FrameLayout {
         @SuppressLint("ResourceType")
         public boolean onDown(MotionEvent event) {
             // Show the zoom controls
-            if (mZoomControlsEnabled && mZoomEnabled) {
+            if (mMapboxMap.isZoomControlsEnabled() && mMapboxMap.isZoomEnabled()) {
                 mZoomButtonsController.setVisible(true);
             }
             return true;
@@ -2885,7 +2742,7 @@ public final class MapView extends FrameLayout {
         // Called for double taps
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
-            if (!mZoomEnabled) {
+            if (!mMapboxMap.isZoomEnabled()) {
                 return false;
             }
 
@@ -2944,16 +2801,16 @@ public final class MapView extends FrameLayout {
             List<Marker> nearbyMarkers = getMarkersInBounds(tapBounds);
             long newSelectedMarkerId = -1;
 
-            if (nearbyMarkers!=null && nearbyMarkers.size() > 0) {
+            if (nearbyMarkers != null && nearbyMarkers.size() > 0) {
                 Collections.sort(nearbyMarkers);
                 for (Marker nearbyMarker : nearbyMarkers) {
                     boolean found = false;
                     for (Marker selectedMarker : mSelectedMarkers) {
-                        if(selectedMarker.equals(nearbyMarker)){
+                        if (selectedMarker.equals(nearbyMarker)) {
                             found = true;
                         }
                     }
-                    if(!found){
+                    if (!found) {
                         newSelectedMarkerId = nearbyMarker.getId();
                         break;
                     }
@@ -3001,7 +2858,7 @@ public final class MapView extends FrameLayout {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
-            if (!mScrollEnabled) {
+            if (!mMapboxMap.isScrollEnabled()) {
                 return false;
             }
 
@@ -3033,7 +2890,7 @@ public final class MapView extends FrameLayout {
         // Called for drags
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!mScrollEnabled) {
+            if (!mMapboxMap.isScrollEnabled()) {
                 return false;
             }
 
@@ -3063,7 +2920,7 @@ public final class MapView extends FrameLayout {
         // Called when two fingers first touch the screen
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            if (!mZoomEnabled) {
+            if (!mMapboxMap.isZoomEnabled()) {
                 return false;
             }
 
@@ -3086,7 +2943,7 @@ public final class MapView extends FrameLayout {
         // Called for pinch zooms and quickzooms/quickscales
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if (!mZoomEnabled) {
+            if (!mMapboxMap.isZoomEnabled()) {
                 return false;
             }
 
@@ -3115,7 +2972,7 @@ public final class MapView extends FrameLayout {
             mQuickZoom = !mTwoTap;
 
             // Scale the map
-            if (mScrollEnabled && !mQuickZoom && mUserLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
+            if (mMapboxMap.isScrollEnabled() && !mQuickZoom && mUserLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
                 // around gesture
                 mNativeMapView.scaleBy(detector.getScaleFactor(), detector.getFocusX() / mScreenDensity, detector.getFocusY() / mScreenDensity);
             } else {
@@ -3136,7 +2993,7 @@ public final class MapView extends FrameLayout {
         // Called when two fingers first touch the screen
         @Override
         public boolean onRotateBegin(RotateGestureDetector detector) {
-            if (!mRotateEnabled) {
+            if (!mMapboxMap.isRotateEnabled()) {
                 return false;
             }
 
@@ -3159,7 +3016,7 @@ public final class MapView extends FrameLayout {
         // Called for rotation
         @Override
         public boolean onRotate(RotateGestureDetector detector) {
-            if (!mRotateEnabled) {
+            if (!mMapboxMap.isRotateEnabled()) {
                 return false;
             }
 
@@ -3215,7 +3072,7 @@ public final class MapView extends FrameLayout {
 
         @Override
         public boolean onShoveBegin(ShoveGestureDetector detector) {
-            if (!mTiltEnabled) {
+            if (!mMapboxMap.isTiltEnabled()) {
                 return false;
             }
 
@@ -3235,7 +3092,7 @@ public final class MapView extends FrameLayout {
 
         @Override
         public boolean onShove(ShoveGestureDetector detector) {
-            if (!mTiltEnabled) {
+            if (!mMapboxMap.isTiltEnabled()) {
                 return false;
             }
 
@@ -3286,7 +3143,7 @@ public final class MapView extends FrameLayout {
         // Called when user pushes a zoom button
         @Override
         public void onZoom(boolean zoomIn) {
-            if (!mZoomEnabled) {
+            if (!mMapboxMap.isZoomEnabled()) {
                 return;
             }
 
@@ -3317,7 +3174,7 @@ public final class MapView extends FrameLayout {
                 return true;
 
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                if (!mScrollEnabled) {
+                if (!mMapboxMap.isScrollEnabled()) {
                     return false;
                 }
 
@@ -3329,7 +3186,7 @@ public final class MapView extends FrameLayout {
                 return true;
 
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                if (!mScrollEnabled) {
+                if (!mMapboxMap.isScrollEnabled()) {
                     return false;
                 }
 
@@ -3341,7 +3198,7 @@ public final class MapView extends FrameLayout {
                 return true;
 
             case KeyEvent.KEYCODE_DPAD_UP:
-                if (!mScrollEnabled) {
+                if (!mMapboxMap.isScrollEnabled()) {
                     return false;
                 }
 
@@ -3353,7 +3210,7 @@ public final class MapView extends FrameLayout {
                 return true;
 
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                if (!mScrollEnabled) {
+                if (!mMapboxMap.isScrollEnabled()) {
                     return false;
                 }
 
@@ -3379,7 +3236,7 @@ public final class MapView extends FrameLayout {
             // onKeyLongPress is fired
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                if (!mZoomEnabled) {
+                if (!mMapboxMap.isZoomEnabled()) {
                     return false;
                 }
 
@@ -3409,7 +3266,7 @@ public final class MapView extends FrameLayout {
         switch (keyCode) {
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                if (!mZoomEnabled) {
+                if (!mMapboxMap.isZoomEnabled()) {
                     return false;
                 }
 
@@ -3430,7 +3287,7 @@ public final class MapView extends FrameLayout {
         switch (event.getActionMasked()) {
             // The trackball was rotated
             case MotionEvent.ACTION_MOVE:
-                if (!mScrollEnabled) {
+                if (!mMapboxMap.isScrollEnabled()) {
                     return false;
                 }
 
@@ -3458,7 +3315,7 @@ public final class MapView extends FrameLayout {
 
             // Trackball was released
             case MotionEvent.ACTION_UP:
-                if (!mZoomEnabled) {
+                if (!mMapboxMap.isZoomEnabled()) {
                     return false;
                 }
 
@@ -3523,7 +3380,7 @@ public final class MapView extends FrameLayout {
             switch (event.getActionMasked()) {
                 // Mouse scrolls
                 case MotionEvent.ACTION_SCROLL:
-                    if (!mZoomEnabled) {
+                    if (!mMapboxMap.isZoomEnabled()) {
                         return false;
                     }
 
@@ -3556,14 +3413,14 @@ public final class MapView extends FrameLayout {
             case MotionEvent.ACTION_HOVER_ENTER:
             case MotionEvent.ACTION_HOVER_MOVE:
                 // Show the zoom controls
-                if (mZoomControlsEnabled && mZoomEnabled) {
+                if (mMapboxMap.isZoomControlsEnabled() && mMapboxMap.isZoomEnabled()) {
                     mZoomButtonsController.setVisible(true);
                 }
                 return true;
 
             case MotionEvent.ACTION_HOVER_EXIT:
                 // Hide the zoom controls
-                if (mZoomControlsEnabled) {
+                if (mMapboxMap.isZoomControlsEnabled()) {
                     mZoomButtonsController.setVisible(false);
                 }
 
@@ -3938,7 +3795,7 @@ public final class MapView extends FrameLayout {
         mOnMyBearingTrackingModeChangeListener = listener;
     }
 
-    private void resetTrackingModes(){
+    private void resetTrackingModes() {
         try {
             //noinspection ResourceType
             setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
@@ -4120,14 +3977,14 @@ public final class MapView extends FrameLayout {
     /**
      * Sets a callback object which will be triggered when the {@link MapboxMap} instance is ready to be used.
      *
-     * @param callback 	The callback object that will be triggered when the map is ready to be used.
+     * @param callback The callback object that will be triggered when the map is ready to be used.
      */
     @UiThread
-    public void getMapAsync(@NonNull OnMapReadyCallback callback){
+    public void getMapAsync(@NonNull OnMapReadyCallback callback) {
         callback.onMapReady(mMapboxMap);
     }
 
-    MapboxMap getMapboxMap(){
+    MapboxMap getMapboxMap() {
         return mMapboxMap;
     }
 

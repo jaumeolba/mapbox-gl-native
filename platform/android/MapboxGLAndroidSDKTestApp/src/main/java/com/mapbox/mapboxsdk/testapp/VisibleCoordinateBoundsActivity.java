@@ -57,7 +57,7 @@ public class VisibleCoordinateBoundsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // Disable UserInput
-                        mMapView.setScrollEnabled(false);
+//fixme                        mMapView.setScrollEnabled(false);
                         mMapView.setZoomEnabled(false);
 
                         // Reposition coordinate bounds
