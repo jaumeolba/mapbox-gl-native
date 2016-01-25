@@ -46,11 +46,11 @@ public class MapFragment extends Fragment {
     private MapView mMap;
     private OnMapReadyCallback mMapReadyCallback;
 
-    public MapFragment newInstance(){
+    public static MapFragment newInstance(){
         return new MapFragment();
     }
 
-    public MapFragment newInstance(MapboxMapOptions mapboxMapOptions) {
+    public static MapFragment newInstance(MapboxMapOptions mapboxMapOptions) {
         final MapFragment mapFragment = new MapFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARGS_MAPBOXMAP_OPTIONS, mapboxMapOptions);
@@ -58,110 +58,63 @@ public class MapFragment extends Fragment {
         return mapFragment;
     }
 
-    //
-    // Lifecycle events
-    //
-
-    // Called when the fragment is created
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.v(TAG, "onCreateView");
-
-        // Create the map
         mMap = (MapView) inflater.inflate(R.layout.fragment_mapview, container, false);
-
-        // Set accessToken
         mMap.setAccessToken(ApiAccess.getToken(inflater.getContext()));
-
-        // Need to pass on any saved state to the map
         mMap.onCreate(savedInstanceState);
-
-        // Return the map as the root view
         return mMap;
     }
 
-    // Called when the fragment is destroyed
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.v(TAG, "onDestroyView");
-
-        // Need to pass on to view
-        mMap.onDestroy();
-        mMap = null;
-    }
-
-    // Called when the fragment is visible
     @Override
     public void onStart() {
         super.onStart();
-        Log.v(TAG, "onStart");
-
-        // Need to pass on to view
         mMap.onStart();
     }
 
-    // Called when the fragment is invisible
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.v(TAG, "onStop");
-
-        // Need to pass on to view
-        mMap.onStop();
-    }
-
-    // Called when the fragment is in the background
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.v(TAG, "onPause");
-
-        // Need to pass on to view
-        mMap.onPause();
-    }
-
-    // Called when the fragment is no longer in the background
     @Override
     public void onResume() {
         super.onResume();
-        Log.v(TAG, "onResume");
-
-        // Need to pass on to view
         mMap.onResume();
-
         if(mMapReadyCallback!=null){
             mMapReadyCallback.onMapReady(mMap.getMapboxMap());
         }
     }
 
-    // Called before fragment is destroyed
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
+    public void onPause() {
+        super.onPause();
+        mMap.onPause();
+    }
 
-        // Need to retrieve any saved state from the map
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         mMap.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onLowMemory() {
-        Log.v(TAG, "OnLowMemory");
+    public void onStop() {
+        super.onStop();
+        mMap.onStop();
+    }
 
-        // Need to pass on to view
+    @Override
+    public void onLowMemory() {
         mMap.onLowMemory();
         super.onLowMemory();
     }
 
-    //
-    // Property methods
-    //
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mMap.onDestroy();
+        mMap = null;
+    }
 
     @NonNull
     public void getMapAsync(@NonNull OnMapReadyCallback onMapReadyCallback){
         mMapReadyCallback = onMapReadyCallback;
     }
-
 }
