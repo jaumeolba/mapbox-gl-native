@@ -17,4 +17,10 @@ public class MapboxConstants {
      */
     public static final String KEY_META_DATA_MANIFEST = "com.mapbox.AccessToken";
 
+    /**
+     * Default animation time
+     */
+    public static final int ANIMATION_DURATION = 300;
+
+
 }

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -63,27 +64,24 @@ public class DoubleMapActivity extends AppCompatActivity {
             // MapView large
             mMapView = (MapView) view.findViewById(R.id.mapview);
             mMapView.onCreate(savedInstanceState);
-            mMapView.setZoom(18);
-
-            // MapView mini
-            mMapViewMini = (MapView) view.findViewById(R.id.mini_map);
-            mMapViewMini.onCreate(savedInstanceState);
-            mMapViewMini.setZoom(4);
-
             mMapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
                     mapboxMap.setStyle(Style.DARK);
 
+                    mapboxMap.moveCamera(CameraUpdateFactory.zoomTo(18));
                     try {
                         mapboxMap.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
-                    }catch (SecurityException e){
+                    } catch (SecurityException e) {
                         // permission is handled in MainActivity
                         getActivity().finish();
                     }
                 }
             });
 
+            // MapView mini
+            mMapViewMini = (MapView) view.findViewById(R.id.mini_map);
+            mMapViewMini.onCreate(savedInstanceState);
             mMapViewMini.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
@@ -92,6 +90,7 @@ public class DoubleMapActivity extends AppCompatActivity {
                     mapboxMap.setCompassEnabled(false);
                     mapboxMap.setAttributionVisibility(View.GONE);
                     mapboxMap.setLogoVisibility(View.GONE);
+                    mapboxMap.moveCamera(CameraUpdateFactory.zoomTo(4));
 
                     try {
                         mapboxMap.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);

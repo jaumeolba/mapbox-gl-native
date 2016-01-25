@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -448,7 +449,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update) {
-        animateCamera(update, 1, null);
+        animateCamera(update, MapboxConstants.ANIMATION_DURATION, null);
     }
 
     /**
@@ -461,7 +462,7 @@ public class MapboxMap {
      */
     @UiThread
     public final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
-        animateCamera(update, 1, callback);
+        animateCamera(update, MapboxConstants.ANIMATION_DURATION, callback);
     }
 
     /**
