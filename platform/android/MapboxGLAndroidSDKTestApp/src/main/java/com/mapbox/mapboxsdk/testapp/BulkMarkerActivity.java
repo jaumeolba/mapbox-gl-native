@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,8 @@ import android.widget.Spinner;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.testapp.utils.GeoParseUtil;
 import com.mapbox.mapboxsdk.testapp.utils.TimingLogger;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
@@ -54,13 +57,19 @@ public class BulkMarkerActivity extends AppCompatActivity implements AdapterView
         mMapView.onCreate(savedInstanceState);
         mMapView.setLatLng(new LatLng(38.87031, -77.00897));
         mMapView.setZoom(10);
-        mMapView.setCompassEnabled(false);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(actionBar.getThemedContext(), R.array.bulk_marker_list, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(this);
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setCompassEnabled(false);
+            }
+        });
     }
 
     @Override

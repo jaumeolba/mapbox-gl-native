@@ -41,7 +41,6 @@ public class CoordinateChangeActivity extends AppCompatActivity {
         mMapView.onCreate(savedInstanceState);
         mMapView.setLatLng(new LatLng(38.87031, -77.00897));
         mMapView.setZoom(16);
-        mMapView.setCompassEnabled(false);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setColorFilter(ContextCompat.getColor(this, R.color.primary));
@@ -56,6 +55,7 @@ public class CoordinateChangeActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.MAPBOX_STREETS);
+                mapboxMap.setCompassEnabled(false);
             }
         });
     }

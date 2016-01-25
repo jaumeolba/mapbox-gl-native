@@ -1534,7 +1534,7 @@ public class MapView extends FrameLayout {
      * @return If true, map debug information is currently shown.
      */
     @UiThread
-    public boolean isDebugActive() {
+    boolean isDebugActive() {
         return mNativeMapView.getDebug();
     }
 
@@ -1547,7 +1547,7 @@ public class MapView extends FrameLayout {
      * @param debugActive If true, map debug information is shown.
      */
     @UiThread
-    public void setDebugActive(boolean debugActive) {
+    void setDebugActive(boolean debugActive) {
         mNativeMapView.setDebug(debugActive);
     }
 
@@ -1561,7 +1561,7 @@ public class MapView extends FrameLayout {
      * @see MapView#isDebugActive()
      */
     @UiThread
-    public void cycleDebugOptions() {
+    void cycleDebugOptions() {
         mNativeMapView.cycleDebugOptions();
     }
 
@@ -3597,7 +3597,7 @@ public class MapView extends FrameLayout {
      * @return True if the compass is enabled; false if the compass is disabled.
      */
     @UiThread
-    public boolean isCompassEnabled() {
+    boolean isCompassEnabled() {
         return mCompassView.isEnabled();
     }
 
@@ -3613,7 +3613,7 @@ public class MapView extends FrameLayout {
      * @param compassEnabled True to enable the compass; false to disable the compass.
      */
     @UiThread
-    public void setCompassEnabled(boolean compassEnabled) {
+    void setCompassEnabled(boolean compassEnabled) {
         mCompassView.setEnabled(compassEnabled);
     }
 

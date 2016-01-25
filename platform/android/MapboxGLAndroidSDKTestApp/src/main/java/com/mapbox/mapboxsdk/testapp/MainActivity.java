@@ -40,6 +40,7 @@ import com.mapbox.mapboxsdk.testapp.layers.ExampleCustomLayer;
 import com.mapbox.mapboxsdk.testapp.utils.GeoParseUtil;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,8 +204,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Set default UI state
-        mNavigationView.getMenu().findItem(R.id.action_compass).setChecked(mMapView.isCompassEnabled());
-        mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mMapView.isDebugActive());
+        //FIXME need to correctly manage this
+//        mNavigationView.getMenu().findItem(R.id.action_compass).setChecked(mMapboxMap.isCompassEnabled());
+//        mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mMapboxMap.isDebugActive());
         mNavigationView.getMenu().findItem(R.id.action_markers).setChecked(mIsAnnotationsOn);
         toggleGps(mMapView.isMyLocationEnabled());
 
@@ -330,8 +332,8 @@ public class MainActivity extends AppCompatActivity {
 
                             case R.id.action_debug:
                                 // Cycle map debug options
-                                mMapView.cycleDebugOptions();
-                                toggleFpsCounter(mMapView.isDebugActive());
+                                mMapboxMap.cycleDebugOptions();
+                                toggleFpsCounter(mMapboxMap.isDebugActive());
                                 return true;
 
                             case R.id.action_markers:
@@ -341,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
                             case R.id.action_compass:
                                 // Toggle compass
-                                mMapView.setCompassEnabled(!mMapView.isCompassEnabled());
+                                mMapboxMap.setCompassEnabled(!mMapboxMap.isCompassEnabled());
                                 return true;
 
                             case R.id.action_mapboxmap:
@@ -612,12 +614,12 @@ public class MainActivity extends AppCompatActivity {
     private void addCustomLayer() {
         mIsShowingCustomLayer = true;
         mMapView.addCustomLayer(
-            new CustomLayer("custom",
-                ExampleCustomLayer.createContext(),
-                ExampleCustomLayer.InitializeFunction,
-                ExampleCustomLayer.RenderFunction,
-                ExampleCustomLayer.DeinitializeFunction),
-            null);
+                new CustomLayer("custom",
+                        ExampleCustomLayer.createContext(),
+                        ExampleCustomLayer.InitializeFunction,
+                        ExampleCustomLayer.RenderFunction,
+                        ExampleCustomLayer.DeinitializeFunction),
+                null);
     }
 
     private void removeCustomLayer() {

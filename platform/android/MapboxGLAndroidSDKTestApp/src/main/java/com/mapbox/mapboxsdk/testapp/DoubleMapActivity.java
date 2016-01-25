@@ -70,7 +70,6 @@ public class DoubleMapActivity extends AppCompatActivity {
             mMapViewMini.onCreate(savedInstanceState);
             mMapViewMini.setAttributionVisibility(View.GONE);
             mMapViewMini.setLogoVisibility(View.GONE);
-            mMapViewMini.setCompassEnabled(false);
             mMapViewMini.setZoom(4);
 
             try {
@@ -93,6 +92,7 @@ public class DoubleMapActivity extends AppCompatActivity {
                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
                     mapboxMap.setStyle(Style.LIGHT);
                     mapboxMap.setAllGesturesEnabled(false);
+                    mapboxMap.setCompassEnabled(false);
                 }
             });
 

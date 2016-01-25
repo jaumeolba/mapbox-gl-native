@@ -42,7 +42,6 @@ public class CameraActivity extends AppCompatActivity {
 
         mMapView = (MapView) findViewById(R.id.cameraMapView);
         mMapView.setAccessToken(ApiAccess.getToken(this));
-        mMapView.setCompassEnabled(true);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
