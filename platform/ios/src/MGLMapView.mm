@@ -66,6 +66,10 @@ const NSTimeInterval MGLAnimationDuration = 0.3;
 /// match a typical interval between user location updates.
 const NSTimeInterval MGLUserLocationAnimationDuration = 1.0;
 
+/// Distance between the map view’s edge and that of the user location
+/// annotation view.
+const CGFloat MGLUserLocationAnnotationViewPadding = 50;
+
 const CGSize MGLAnnotationUpdateViewportOutset = {150, 150};
 const CGFloat MGLMinimumZoom = 3;
 
@@ -3111,12 +3115,6 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
         }
     }
 
-    CLLocationDirection course = self.userLocation.location.course;
-    if (course < 0 || self.userTrackingMode != MGLUserTrackingModeFollowWithCourse)
-    {
-        course = -1;
-    }
-
     if (self.userTrackingMode != MGLUserTrackingModeNone)
     {
         // center on user location unless we're already centered there (or very close)
@@ -3523,10 +3521,10 @@ std::chrono::steady_clock::duration MGLDurationInSeconds(float duration)
         case MGLAnnotationVerticalAlignmentCenter:
             break;
         case MGLAnnotationVerticalAlignmentTop:
-            center.y = CGRectGetHeight(self.userLocationAnnotationView.frame);
+            center.y = CGRectGetHeight(self.userLocationAnnotationView.frame) + MGLUserLocationAnnotationViewPadding;
             break;
         case MGLAnnotationVerticalAlignmentBottom:
-            center.y = CGRectGetHeight(contentFrame) - CGRectGetHeight(self.userLocationAnnotationView.frame);
+            center.y = CGRectGetHeight(contentFrame) - CGRectGetHeight(self.userLocationAnnotationView.frame) - MGLUserLocationAnnotationViewPadding;
             break;
     }
     
