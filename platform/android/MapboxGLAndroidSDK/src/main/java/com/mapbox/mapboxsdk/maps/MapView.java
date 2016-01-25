@@ -1551,30 +1551,6 @@ public class MapView extends FrameLayout {
     }
 
     //
-    // InfoWindows
-    //
-
-    /**
-     * Changes whether the map allows concurrent multiple infowindows to be shown.
-     *
-     * @param allow If true, map allows concurrent multiple infowindows to be shown.
-     */
-    @UiThread
-    public void setAllowConcurrentMultipleOpenInfoWindows(boolean allow) {
-        this.mAllowConcurrentMultipleOpenInfoWindows = allow;
-    }
-
-    /**
-     * Returns whether the map allows concurrent multiple infowindows to be shown.
-     *
-     * @return If true, map allows concurrent multiple infowindows to be shown.
-     */
-    @UiThread
-    public boolean isAllowConcurrentMultipleOpenInfoWindows() {
-        return this.mAllowConcurrentMultipleOpenInfoWindows;
-    }
-
-    //
     // Debug
     //
 
@@ -2305,7 +2281,8 @@ public class MapView extends FrameLayout {
     @UiThread
     public void selectMarker(@NonNull Marker marker) {
         if (marker == null) {
-            Log.w(TAG, "marker was null, so just returning");
+            Log.w(TAG, "marker was null, so just" +
+                    " returning");
             return;
         }
 
@@ -2314,7 +2291,7 @@ public class MapView extends FrameLayout {
         }
 
         // Need to deselect any currently selected annotation first
-        if (!isAllowConcurrentMultipleOpenInfoWindows()) {
+        if (!mMapboxMap.isAllowConcurrentMultipleOpenInfoWindows()) {
             deselectMarkers();
         }
 

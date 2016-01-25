@@ -49,53 +49,63 @@ public class MapboxMapTest {
     }
 
     @Test
-    public void testRotateEnabled(){
+    public void testRotateEnabled() {
         mMapboxMap.setRotateEnabled(true);
         assertTrue("RotateEnabled should be true", mMapboxMap.isRotateEnabled());
     }
 
     @Test
-    public void testRotateDisabled(){
+    public void testRotateDisabled() {
         mMapboxMap.setRotateEnabled(false);
         assertFalse("RotateDisabled should be false", mMapboxMap.isRotateEnabled());
     }
 
     @Test
-    public void testZoomEnabled(){
+    public void testZoomEnabled() {
         mMapboxMap.setZoomEnabled(true);
         assertTrue("ZoomEnabled should be true", mMapboxMap.isZoomEnabled());
     }
 
     @Test
-    public void testZoomDisabled(){
+    public void testZoomDisabled() {
         mMapboxMap.setZoomEnabled(false);
         assertFalse("ZoomEnabled should be false", mMapboxMap.isZoomEnabled());
     }
 
     @Test
-    public void testZoomControlsEnabled(){
+    public void testZoomControlsEnabled() {
         mMapboxMap.setZoomControlsEnabled(true);
         assertTrue("ZoomControlsEnabled should be true", mMapboxMap.isZoomControlsEnabled());
     }
 
     @Test
-    public void testZoomControlsDisabled(){
+    public void testZoomControlsDisabled() {
         mMapboxMap.setZoomControlsEnabled(false);
         assertFalse("ZoomControlsEnabled should be false", mMapboxMap.isZoomControlsEnabled());
     }
 
     @Test
-    public void testTiltEnabled(){
+    public void testTiltEnabled() {
         mMapboxMap.setTiltEnabled(true);
         assertTrue("TiltEnabled should be true", mMapboxMap.isTiltEnabled());
     }
 
     @Test
-    public void testTiltDisabled(){
+    public void testTiltDisabled() {
         mMapboxMap.setTiltEnabled(false);
         assertFalse("TiltEnabled should be false", mMapboxMap.isTiltEnabled());
     }
 
-    
+    @Test
+    public void testConcurrentInfoWindowEnabled() {
+        mMapboxMap.setAllowConcurrentMultipleOpenInfoWindows(true);
+        assertTrue("ConcurrentWindows should be true", mMapboxMap.isAllowConcurrentMultipleOpenInfoWindows());
+    }
+
+    @Test
+    public void testConcurrentInfoWindowDisabled() {
+        mMapboxMap.setAllowConcurrentMultipleOpenInfoWindows(false);
+        assertFalse("ConcurretnWindows should be false", mMapboxMap.isAllowConcurrentMultipleOpenInfoWindows());
+    }
 
 }

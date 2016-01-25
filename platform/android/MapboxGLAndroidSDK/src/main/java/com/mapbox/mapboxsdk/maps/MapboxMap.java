@@ -44,6 +44,7 @@ public class MapboxMap {
     private boolean mZoomControlsEnabled;
     private boolean mRotateEnabled = true;
     private boolean mTiltEnabled =true;
+    private boolean mAllowConcurrentMultipleInfoWindows;
 
     //
     // Interfaces
@@ -148,7 +149,7 @@ public class MapboxMap {
     /**
      * Interface definition for a callback to be invoked when the displayed map view changes.
      *
-     * @see MapboxMap#addOnMapChangedListener(OnMapChangedListener)
+     * @see MapView#addOnMapChangedListener(OnMapChangedListener)
      * @see MapView.MapChange
      */
     public interface OnMapChangedListener {
@@ -507,7 +508,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setAllowConcurrentMultipleOpenInfoWindows(boolean allow) {
-        mMapView.setAllowConcurrentMultipleOpenInfoWindows(allow);
+        mAllowConcurrentMultipleInfoWindows = allow;
     }
 
     /**
@@ -517,7 +518,7 @@ public class MapboxMap {
      */
     @UiThread
     public boolean isAllowConcurrentMultipleOpenInfoWindows() {
-        return mMapView.isAllowConcurrentMultipleOpenInfoWindows();
+        return mAllowConcurrentMultipleInfoWindows;
     }
 
     //
