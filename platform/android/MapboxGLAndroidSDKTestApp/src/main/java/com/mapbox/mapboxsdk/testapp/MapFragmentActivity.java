@@ -10,6 +10,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapFragment;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -44,6 +46,15 @@ public class MapFragmentActivity extends AppCompatActivity {
         } else {
             mMapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT);
         }
+
+        mMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyleUrl(Style.SATELLITE_STREETS);
+                mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition(new LatLng(48.861431, 2.334166), 10, 0, 0)));
+            }
+        });
     }
 
     @Override
