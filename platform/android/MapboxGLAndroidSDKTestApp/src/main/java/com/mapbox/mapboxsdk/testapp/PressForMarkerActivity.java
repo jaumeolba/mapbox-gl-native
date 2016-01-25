@@ -13,6 +13,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -43,7 +44,6 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
         }
 
         mMapView = new MapView(this, ApiAccess.getToken(this));
-        mMapView.setStyleUrl(Style.EMERALD);
         mMapView.onCreate(savedInstanceState);
         mMapView.setLatLng(new LatLng(45.1855569, 5.7215506));
         mMapView.setZoom(11);
@@ -54,6 +54,13 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
             mMarkerList = savedInstanceState.getParcelableArrayList(STATE_MARKER_LIST);
             mMapView.addMarkers(mMarkerList);
         }
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyle(Style.EMERALD);
+            }
+        });
     }
 
     @Override

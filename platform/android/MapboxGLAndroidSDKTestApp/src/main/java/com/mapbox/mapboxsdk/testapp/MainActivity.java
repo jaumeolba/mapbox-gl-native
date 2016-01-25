@@ -35,6 +35,7 @@ import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.testapp.layers.ExampleCustomLayer;
 import com.mapbox.mapboxsdk.testapp.utils.GeoParseUtil;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     // Used for the UI
     private DrawerLayout mDrawerLayout;
     private MapView mMapView;
+    private MapboxMap mMapboxMap;
     private TextView mFpsTextView;
     private int mSelectedStyle = R.id.actionStyleMapboxStreets;
     private NavigationView mNavigationView;
@@ -204,8 +206,15 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.getMenu().findItem(R.id.action_compass).setChecked(mMapView.isCompassEnabled());
         mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mMapView.isDebugActive());
         mNavigationView.getMenu().findItem(R.id.action_markers).setChecked(mIsAnnotationsOn);
-        changeMapStyle(mSelectedStyle);
         toggleGps(mMapView.isMyLocationEnabled());
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mMapboxMap = mapboxMap;
+                changeMapStyle(mSelectedStyle);
+            }
+        });
     }
 
     /**
@@ -449,32 +458,32 @@ public class MainActivity extends AppCompatActivity {
     private boolean changeMapStyle(int id) {
         switch (id) {
             case R.id.actionStyleMapboxStreets:
-                mMapView.setStyle(Style.MAPBOX_STREETS);
+                mMapboxMap.setStyle(Style.MAPBOX_STREETS);
                 mSelectedStyle = id;
                 return true;
 
             case R.id.actionStyleEmerald:
-                mMapView.setStyle(Style.EMERALD);
+                mMapboxMap.setStyle(Style.EMERALD);
                 mSelectedStyle = id;
                 return true;
 
             case R.id.actionStyleLight:
-                mMapView.setStyle(Style.LIGHT);
+                mMapboxMap.setStyle(Style.LIGHT);
                 mSelectedStyle = id;
                 return true;
 
             case R.id.actionStyleDark:
-                mMapView.setStyle(Style.DARK);
+                mMapboxMap.setStyle(Style.DARK);
                 mSelectedStyle = id;
                 return true;
 
             case R.id.actionStyleSatellite:
-                mMapView.setStyle(Style.SATELLITE);
+                mMapboxMap.setStyle(Style.SATELLITE);
                 mSelectedStyle = id;
                 return true;
 
             case R.id.actionStyleSatelliteStreets:
-                mMapView.setStyle(Style.SATELLITE_STREETS);
+                mMapboxMap.setStyle(Style.SATELLITE_STREETS);
                 mSelectedStyle = id;
                 return true;
 

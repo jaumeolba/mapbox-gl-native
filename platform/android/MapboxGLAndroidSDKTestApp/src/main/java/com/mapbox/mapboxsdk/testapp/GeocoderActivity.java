@@ -1,6 +1,7 @@
 package com.mapbox.mapboxsdk.testapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -52,7 +54,6 @@ public class GeocoderActivity extends AppCompatActivity {
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.setAccessToken(ApiAccess.getToken(this));
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
         mapView.setCenterCoordinate(dupontCircle);
         mapView.setZoomLevel(15);
         mapView.onCreate(savedInstanceState);
@@ -66,6 +67,13 @@ public class GeocoderActivity extends AppCompatActivity {
                         .position(point)
                         .title("Your finger is here"));
                 geocode(point);
+            }
+        });
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyle(Style.EMERALD);
             }
         });
     }

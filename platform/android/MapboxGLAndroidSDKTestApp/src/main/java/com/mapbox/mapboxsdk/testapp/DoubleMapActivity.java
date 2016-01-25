@@ -1,6 +1,7 @@
 package com.mapbox.mapboxsdk.testapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -14,6 +15,8 @@ import android.view.ViewGroup;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 public class DoubleMapActivity extends AppCompatActivity {
 
@@ -60,18 +63,15 @@ public class DoubleMapActivity extends AppCompatActivity {
             // MapView large
             mMapView = (MapView) view.findViewById(R.id.mapview);
             mMapView.onCreate(savedInstanceState);
-            mMapView.setStyle(Style.DARK);
             mMapView.setZoom(18);
 
             // MapView mini
             mMapViewMini = (MapView) view.findViewById(R.id.mini_map);
             mMapViewMini.onCreate(savedInstanceState);
-            mMapViewMini.setStyle(Style.LIGHT);
             mMapViewMini.setAttributionVisibility(View.GONE);
             mMapViewMini.setLogoVisibility(View.GONE);
             mMapViewMini.setCompassEnabled(false);
             mMapViewMini.setZoom(4);
-//fixme            mMapViewMini.setAllGesturesEnabled(false);
 
             try {
                 mMapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
@@ -80,6 +80,22 @@ public class DoubleMapActivity extends AppCompatActivity {
                 // permission is handled in MainActivity
                 getActivity().finish();
             }
+
+            mMapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                    mapboxMap.setStyle(Style.DARK);
+                }
+            });
+
+            mMapViewMini.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                    mapboxMap.setStyle(Style.LIGHT);
+                    mapboxMap.setAllGesturesEnabled(false);
+                }
+            });
+
         }
 
         @Override

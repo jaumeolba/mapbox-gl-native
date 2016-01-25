@@ -1,6 +1,7 @@
 package com.mapbox.mapboxsdk.testapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -11,6 +12,8 @@ import android.view.View;
 
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -36,7 +39,6 @@ public class CoordinateChangeActivity extends AppCompatActivity {
         mMapView.setTag(true);
         mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.onCreate(savedInstanceState);
-        mMapView.setStyle(Style.MAPBOX_STREETS);
         mMapView.setLatLng(new LatLng(38.87031, -77.00897));
         mMapView.setZoom(16);
         mMapView.setCompassEnabled(false);
@@ -47,6 +49,13 @@ public class CoordinateChangeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mMapView.setLatLng(getNextLatLng(), true);
+            }
+        });
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyle(Style.MAPBOX_STREETS);
             }
         });
     }

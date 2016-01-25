@@ -1,6 +1,7 @@
 package com.mapbox.mapboxsdk.testapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -40,7 +42,6 @@ public class CameraActivity extends AppCompatActivity {
 
         mMapView = (MapView) findViewById(R.id.cameraMapView);
         mMapView.setAccessToken(ApiAccess.getToken(this));
-        mMapView.setStyle(Style.MAPBOX_STREETS);
         mMapView.setCompassEnabled(true);
         mMapView.onCreate(savedInstanceState);
 
@@ -114,6 +115,12 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyle(Style.MAPBOX_STREETS);
+            }
+        });
     }
 
     @Override

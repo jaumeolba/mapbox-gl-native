@@ -1,12 +1,15 @@
 package com.mapbox.mapboxsdk.testapp;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -33,10 +36,16 @@ public class TiltActivity extends AppCompatActivity {
         // Set up the map
         mMapView = (MapView) findViewById(R.id.tiltMapView);
         mMapView.setAccessToken(ApiAccess.getToken(this));
-        mMapView.setStyleUrl(Style.MAPBOX_STREETS);
         mMapView.setLatLng(dc);
         mMapView.setZoom(11);
         mMapView.onCreate(savedInstanceState);
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mapboxMap.setStyle(Style.MAPBOX_STREETS);
+            }
+        });
     }
 
     @Override

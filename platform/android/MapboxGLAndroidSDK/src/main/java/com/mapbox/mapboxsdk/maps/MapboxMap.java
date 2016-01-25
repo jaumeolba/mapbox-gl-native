@@ -38,6 +38,8 @@ public class MapboxMap {
 
     private MapView mMapView;
 
+    private String mStyleUrl;
+
     private boolean mCompassEnabled;
     private boolean mZoomEnabled = true;
     private boolean mScrollEnabled = true;
@@ -596,6 +598,7 @@ public class MapboxMap {
      */
     @UiThread
     public void setStyleUrl(@Nullable String url) {
+        mStyleUrl = url;
         mMapView.setStyleUrl(url);
     }
 
@@ -629,7 +632,7 @@ public class MapboxMap {
     @UiThread
     @NonNull
     public String getStyleUrl() {
-        return mMapView.getStyleUrl();
+        return mStyleUrl;
     }
 
     //

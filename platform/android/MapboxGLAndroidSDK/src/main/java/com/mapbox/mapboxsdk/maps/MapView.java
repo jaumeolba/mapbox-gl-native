@@ -276,7 +276,6 @@ public class MapView extends FrameLayout {
     //
 
     // These are properties with setters/getters, saved in onSaveInstanceState and XML attributes
-    private boolean mAllowConcurrentMultipleOpenInfoWindows = false;
     private String mStyleUrl;
 
     //
@@ -676,16 +675,6 @@ public class MapView extends FrameLayout {
             if (typedArray.getString(R.styleable.MapView_access_token) != null) {
                 setAccessToken(typedArray.getString(R.styleable.MapView_access_token));
             }
-            if (typedArray.getString(R.styleable.MapView_style_classes) != null) {
-                List<String> styleClasses = Arrays.asList(typedArray
-                        .getString(R.styleable.MapView_style_classes).split("\\s*,\\s*"));
-                for (String styleClass : styleClasses) {
-                    if (styleClass.length() == 0) {
-                        styleClasses.remove(styleClass);
-                    }
-                }
-                setStyleClasses(styleClasses);
-            }
 
             // Compass
             setCompassEnabled(typedArray.getBoolean(R.styleable.MapView_compass_enabled, true));
@@ -753,12 +742,8 @@ public class MapView extends FrameLayout {
             mMapboxMap.setTiltEnabled(savedInstanceState.getBoolean(STATE_TILT_ENABLED));
             mMapboxMap.setZoomControlsEnabled(savedInstanceState.getBoolean(STATE_ZOOM_CONTROLS_ENABLED));
             setDebugActive(savedInstanceState.getBoolean(STATE_DEBUG_ACTIVE));
-            setStyleUrl(savedInstanceState.getString(STATE_STYLE_URL));
+            mMapboxMap.setStyleUrl(savedInstanceState.getString(STATE_STYLE_URL));
             setAccessToken(savedInstanceState.getString(STATE_ACCESS_TOKEN));
-            List<String> appliedStyleClasses = savedInstanceState.getStringArrayList(STATE_STYLE_CLASSES);
-            if (!appliedStyleClasses.isEmpty()) {
-                setStyleClasses(appliedStyleClasses);
-            }
             mNativeMapView.setDefaultTransitionDuration(
                     savedInstanceState.getLong(STATE_DEFAULT_TRANSITION_DURATION));
 
@@ -839,9 +824,8 @@ public class MapView extends FrameLayout {
         outState.putBoolean(STATE_TILT_ENABLED, mMapboxMap.isTiltEnabled());
         outState.putBoolean(STATE_ZOOM_CONTROLS_ENABLED, mMapboxMap.isZoomControlsEnabled());
         outState.putBoolean(STATE_DEBUG_ACTIVE, isDebugActive());
-        outState.putString(STATE_STYLE_URL, getStyleUrl());
+        outState.putString(STATE_STYLE_URL, mMapboxMap.getStyleUrl());
         outState.putString(STATE_ACCESS_TOKEN, getAccessToken());
-        outState.putStringArrayList(STATE_STYLE_CLASSES, new ArrayList<>(getStyleClasses()));
         outState.putLong(STATE_DEFAULT_TRANSITION_DURATION, mNativeMapView.getDefaultTransitionDuration());
         outState.putBoolean(STATE_MY_LOCATION_ENABLED, isMyLocationEnabled());
         outState.putInt(STATE_MY_LOCATION_TRACKING_MODE, mUserLocationView.getMyLocationTrackingMode());
@@ -1629,178 +1613,8 @@ public class MapView extends FrameLayout {
      * @see Style
      */
     @UiThread
-    public void setStyleUrl(@Nullable String url) {
-        if (url == null) {
-            url = Style.MAPBOX_STREETS;
-        }
-        mStyleUrl = url;
+    void setStyleUrl(@NonNull String url) {
         mNativeMapView.setStyleUrl(url);
-    }
-
-    /**
-     * <p>
-     * Loads a new map style from the specified bundled style.
-     * </p>
-     * <p>
-     * This method is asynchronous and will return immediately before the style finishes loading.
-     * If you wish to wait for the map to finish loading listen for the {@link MapView#DID_FINISH_LOADING_MAP} event.
-     * </p>
-     * If the style fails to load or an invalid style URL is set, the map view will become blank.
-     * An error message will be logged in the Android logcat and {@link MapView#DID_FAIL_LOADING_MAP} event will be sent.
-     *
-     * @param style The bundled style. Accepts one of the values from {@link Style}.
-     * @see Style
-     */
-    @UiThread
-    public void setStyle(@Style.StyleUrl String style) {
-        setStyleUrl(style);
-    }
-
-    /**
-     * <p>
-     * Returns the map style currently displayed in the map view.
-     * </p>
-     * If the default style is currently displayed, a URL will be returned instead of null.
-     *
-     * @return The URL of the map style.
-     */
-    @UiThread
-    @NonNull
-    public String getStyleUrl() {
-        return mStyleUrl;
-    }
-
-    /**
-     * Returns the set of currently active map style classes.
-     *
-     * @return A list of class identifiers.
-     */
-    @UiThread
-    @NonNull
-    public List<String> getStyleClasses() {
-        return Collections.unmodifiableList(mNativeMapView.getClasses());
-    }
-
-    /**
-     * <p>
-     * Changes the set of currently active map style classes immediately.
-     * </p>
-     * <p>
-     * The list of valid class identifiers is defined by the currently loaded map style.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setStyleClasses(List, long)}.
-     *
-     * @param styleClasses A list of class identifiers.
-     * @see MapView#setStyleClasses(List, long)
-     * @see MapView#setStyleUrl(String)
-     */
-    @UiThread
-    public void setStyleClasses(@NonNull List<String> styleClasses) {
-        setStyleClasses(styleClasses, 0);
-    }
-
-    /**
-     * <p>
-     * Changes the set of currently active map style classes with an animated transition.
-     * </p>
-     * The list of valid class identifiers is defined by the currently loaded map style.
-     *
-     * @param styleClasses       A list of class identifiers.
-     * @param transitionDuration The duration of the transition animation in milliseconds.
-     * @see MapView#setStyleClasses(List, long)
-     * @see MapView#setStyleUrl(String)
-     */
-    @UiThread
-    public void setStyleClasses(@NonNull List<String> styleClasses, @IntRange(from = 0) long transitionDuration) {
-        if (styleClasses == null) {
-            Log.w(TAG, "styleClasses was null, so just returning");
-            return;
-        }
-        if (transitionDuration < 0) {
-            throw new IllegalArgumentException("transitionDuration is < 0");
-        }
-        // TODO non negative check and annotation (go back and check other functions too)
-        mNativeMapView.setDefaultTransitionDuration(transitionDuration);
-        mNativeMapView.setClasses(styleClasses);
-    }
-
-    /**
-     * <p>
-     * Activates the specified map style class.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setStyleClasses(List, long)}.
-     *
-     * @param styleClass The class identifier.
-     * @see MapView#setStyleClasses(List, long)
-     */
-    @UiThread
-    public void addStyleClass(@NonNull String styleClass) {
-        if (styleClass == null) {
-            Log.w(TAG, "styleClass was null, so just returning");
-            return;
-        }
-        mNativeMapView.addClass(styleClass);
-    }
-
-    /**
-     * <p>
-     * Deactivates the specified map style class.
-     * </p>
-     * If you want to animate the change, use {@link MapView#setStyleClasses(List, long)}.
-     *
-     * @param styleClass The class identifier.
-     * @see MapView#setStyleClasses(List, long)
-     */
-    @UiThread
-    public void removeStyleClass(@NonNull String styleClass) {
-        if (styleClass == null) {
-            Log.w(TAG, "styleClass was null, so just returning");
-            return;
-        }
-        mNativeMapView.removeClass(styleClass);
-    }
-
-    /**
-     * Returns whether the specified map style class is currently active.
-     *
-     * @param styleClass The class identifier.
-     * @return If true, the class is currently active.
-     */
-    @UiThread
-    public boolean hasStyleClass(@NonNull String styleClass) {
-        if (styleClass == null) {
-            Log.w(TAG, "centerCoordinate was null, so just returning false");
-            return false;
-        }
-        return mNativeMapView.hasClass(styleClass);
-    }
-
-    /**
-     * <p>
-     * Deactivates all the currently active map style classes immediately.
-     * </p>
-     * If you want to animate the change, use {@link MapView#removeAllStyleClasses(long)}.
-     *
-     * @see MapView#removeAllStyleClasses(long)
-     */
-    @UiThread
-    public void removeAllStyleClasses() {
-        removeAllStyleClasses(0);
-    }
-
-    /**
-     * Deactivates all the currently active map style classes with an animated transition.
-     *
-     * @param transitionDuration The duration of the transition animation in milliseconds.
-     */
-    @UiThread
-    public void removeAllStyleClasses(@IntRange(from = 0) long transitionDuration) {
-        if (transitionDuration < 0) {
-            throw new IllegalArgumentException("transitionDuration is < 0");
-        }
-        mNativeMapView.setDefaultTransitionDuration(transitionDuration);
-        ArrayList<String> styleClasses = new ArrayList<>(0);
-        setStyleClasses(styleClasses);
     }
 
     //
