@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk.views;
+package com.mapbox.mapboxsdk.maps;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.mapbox.mapboxsdk.R;
-import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;

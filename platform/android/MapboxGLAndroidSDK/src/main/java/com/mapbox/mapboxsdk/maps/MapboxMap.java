@@ -30,7 +30,6 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
-import com.mapbox.mapboxsdk.views.UserLocationView;
 
 import java.util.List;
 
@@ -459,6 +458,18 @@ public class MapboxMap {
     @UiThread
     public final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
         mMapView.animateCamera(update, 1, callback);
+    }
+
+    /**
+     * Moves the map according to the update with an animation over a specified duration. See CameraUpdateFactory for a set of updates.
+     * If getCameraPosition() is called during the animation, it will return the current location of the camera in flight.
+     *
+     * @param update     The change that should be applied to the camera.
+     * @param durationMs The duration of the animation in milliseconds. This must be strictly positive, otherwise an IllegalArgumentException will be thrown.
+     */
+    @UiThread
+    public final void animateCamera(CameraUpdate update, int durationMs) {
+        mMapView.animateCamera(update, durationMs, null);
     }
 
     /**

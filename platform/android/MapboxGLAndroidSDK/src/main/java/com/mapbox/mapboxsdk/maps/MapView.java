@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
@@ -84,8 +83,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.layers.CustomLayer;
 import com.mapbox.mapboxsdk.utils.ApiAccess;
 import com.mapbox.mapboxsdk.utils.MathUtils;
-import com.mapbox.mapboxsdk.views.CompassView;
-import com.mapbox.mapboxsdk.views.UserLocationView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -270,13 +267,6 @@ public class MapView extends FrameLayout {
     // Used to manage tracking mode changes
     private MapboxMap.OnMyLocationTrackingModeChangeListener mOnMyLocationTrackingModeChangeListener;
     private MapboxMap.OnMyBearingTrackingModeChangeListener mOnMyBearingTrackingModeChangeListener;
-
-    //
-    // Properties
-    //
-
-    // These are properties with setters/getters, saved in onSaveInstanceState and XML attributes
-    private String mStyleUrl;
 
     //
     // Inner classes
@@ -1062,7 +1052,7 @@ public class MapView extends FrameLayout {
      *
      * @return tilt in degrees
      */
-    public double getTilt() {
+    double getTilt() {
         return mNativeMapView.getPitch();
     }
 
@@ -1073,7 +1063,7 @@ public class MapView extends FrameLayout {
      * @param duration Animation time in milliseconds.  If null then 0 is used, making the animation immediate.
      */
     @FloatRange(from = MINIMUM_TILT, to = MAXIMUM_TILT)
-    public void setTilt(Double pitch, @Nullable Long duration) {
+    void setTilt(Double pitch, @Nullable Long duration) {
         long actualDuration = 0;
         if (duration != null) {
             actualDuration = duration;
@@ -1092,7 +1082,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @FloatRange(from = 0, to = 360)
-    public double getDirection() {
+    double getDirection() {
         double direction = -mNativeMapView.getBearing();
 
         while (direction > 360) {
@@ -1124,7 +1114,7 @@ public class MapView extends FrameLayout {
      * @see MapView#setDirection(double, boolean)
      */
     @UiThread
-    public void setDirection(@FloatRange(from = 0, to = 360) double direction) {
+    void setDirection(@FloatRange(from = 0, to = 360) double direction) {
         setDirection(direction, false);
     }
 
@@ -1144,7 +1134,7 @@ public class MapView extends FrameLayout {
      * @param animated  If true, animates the change. If false, immediately changes the map.
      */
     @UiThread
-    public void setDirection(@FloatRange(from = 0, to = 360) double direction, boolean animated) {
+    void setDirection(@FloatRange(from = 0, to = 360) double direction, boolean animated) {
         long duration = animated ? ANIMATION_DURATION : 0;
         mNativeMapView.cancelTransitions();
         // Out of range direactions are normallised in setBearing
@@ -1155,7 +1145,7 @@ public class MapView extends FrameLayout {
      * Resets the map heading to true north and animates the change.
      */
     @UiThread
-    public void resetNorth() {
+    void resetNorth() {
         mNativeMapView.cancelTransitions();
         mNativeMapView.resetNorth();
     }
