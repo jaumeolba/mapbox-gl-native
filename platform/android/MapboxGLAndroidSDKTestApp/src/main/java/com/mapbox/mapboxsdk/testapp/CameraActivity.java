@@ -44,81 +44,81 @@ public class CameraActivity extends AppCompatActivity {
         mMapView.setAccessToken(ApiAccess.getToken(this));
         mMapView.setCompassEnabled(true);
         mMapView.onCreate(savedInstanceState);
-
-        Button cameraButton = (Button) findViewById(R.id.cameraMoveButton);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(44.50128, -88.06216))    // Sets the center of the map to Lambeau Field
-                        .zoom(14)                                   // Sets the zoom
-                        .tilt(30)                                   // Sets the tilt of the camera to 30 degrees
-                        .build();                                   // Creates a CameraPosition from the builder
-                mMapView.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        });
-
-        Button cameraCallbackButton = (Button) findViewById(R.id.cameraEaseButton);
-        cameraCallbackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(48.21874, 11.62465))     // Sets the center of the map to Allianz Arena
-                        .zoom(16)                                   // Sets the zoom
-                        .bearing(180)                               // Sets the orientation of the camera to south
-                        .build();                                   // Creates a CameraPosition from the builder
-
-                MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
-                    @Override
-                    public void onCancel() {
-                        Log.i(TAG, "Duration onCancel Callback called.");
-                        Toast.makeText(CameraActivity.this, "Ease onCancel Callback called.", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        Log.i(TAG, "Duration onFinish Callback called.");
-                        Toast.makeText(CameraActivity.this, "Ease onFinish Callback called.", Toast.LENGTH_LONG).show();
-                    }
-                };
-
-                mMapView.easeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 25000, callback);
-            }
-        });
-
-        Button cameraDurationButton = (Button) findViewById(R.id.cameraAnimateButton);
-        cameraDurationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(-22.91214, -43.23012))     // Sets the center of the map to Maracanã
-                        .bearing(270)                               // Sets the orientation of the camera to west
-                        .tilt(20)                                   // Sets the tilt of the camera to 30 degrees
-                        .build();                                   // Creates a CameraPosition from the builder
-
-                MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
-                    @Override
-                    public void onCancel() {
-                        Log.i(TAG, "Duration onCancel Callback called.");
-                        Toast.makeText(CameraActivity.this, "Duration onCancel Callback called.", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        Log.i(TAG, "Duration onFinish Callback called.");
-                        Toast.makeText(CameraActivity.this, "Duration onFinish Callback called.", Toast.LENGTH_LONG).show();
-                    }
-                };
-
-                mMapView.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 25000, callback);
-            }
-        });
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+            public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+                // set a style
                 mapboxMap.setStyle(Style.MAPBOX_STREETS);
+
+                // handle move button clicks
+                findViewById(R.id.cameraMoveButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(44.50128, -88.06216))    // Sets the center of the map to Lambeau Field
+                                .zoom(14)                                   // Sets the zoom
+                                .tilt(30)                                   // Sets the tilt of the camera to 30 degrees
+                                .build();
+
+                        mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
+                });
+
+                // handle ease button clicks
+                findViewById(R.id.cameraEaseButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(48.21874, 11.62465))     // Sets the center of the map to Allianz Arena
+                                .zoom(16)                                   // Sets the zoom
+                                .bearing(180)                               // Sets the orientation of the camera to south
+                                .build();                                   // Creates a CameraPosition from the builder
+
+                        MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
+                            @Override
+                            public void onCancel() {
+                                Log.i(TAG, "Duration onCancel Callback called.");
+                                Toast.makeText(CameraActivity.this, "Ease onCancel Callback called.", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                Log.i(TAG, "Duration onFinish Callback called.");
+                                Toast.makeText(CameraActivity.this, "Ease onFinish Callback called.", Toast.LENGTH_LONG).show();
+                            }
+                        };
+
+                        mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 25000, callback);
+                    }
+                });
+
+                // handle animate button clicks
+                findViewById(R.id.cameraAnimateButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(-22.91214, -43.23012))   // Sets the center of the map to Maracanã
+                                .bearing(270)                               // Sets the orientation of the camera to west
+                                .tilt(20)                                   // Sets the tilt of the camera to 30 degrees
+                                .build();                                   // Creates a CameraPosition from the builder
+
+                        MapboxMap.CancelableCallback callback = new MapboxMap.CancelableCallback() {
+                            @Override
+                            public void onCancel() {
+                                Log.i(TAG, "Duration onCancel Callback called.");
+                                Toast.makeText(CameraActivity.this, "Duration onCancel Callback called.", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                Log.i(TAG, "Duration onFinish Callback called.");
+                                Toast.makeText(CameraActivity.this, "Duration onFinish Callback called.", Toast.LENGTH_LONG).show();
+                            }
+                        };
+
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 25000, callback);
+                    }
+                });
             }
         });
     }

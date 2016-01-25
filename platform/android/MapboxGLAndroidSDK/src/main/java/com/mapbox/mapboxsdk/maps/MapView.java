@@ -1346,7 +1346,7 @@ public class MapView extends FrameLayout {
      *
      * @return The current position of the Camera.
      */
-    public final CameraPosition getCameraPosition() {
+    final CameraPosition getCameraPosition() {
         return new CameraPosition(getLatLng(), (float) getZoom(), (float) getTilt(), (float) getBearing());
     }
 
@@ -1359,7 +1359,7 @@ public class MapView extends FrameLayout {
      * @param update The change that should be applied to the camera.
      */
     @UiThread
-    public final void animateCamera(CameraUpdate update) {
+    final void animateCamera(CameraUpdate update) {
         animateCamera(update, 1, null);
     }
 
@@ -1373,7 +1373,7 @@ public class MapView extends FrameLayout {
      * @param callback The callback to invoke from the main thread when the animation stops. If the animation completes normally, onFinish() is called; otherwise, onCancel() is called. Do not update or animate the camera from within onCancel().
      */
     @UiThread
-    public final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
+    final void animateCamera(CameraUpdate update, MapboxMap.CancelableCallback callback) {
         animateCamera(update, 1, callback);
     }
 
@@ -1386,7 +1386,7 @@ public class MapView extends FrameLayout {
      * @param callback   An optional callback to be notified from the main thread when the animation stops. If the animation stops due to its natural completion, the callback will be notified with onFinish(). If the animation stops due to interruption by a later camera movement or a user gesture, onCancel() will be called. The callback should not attempt to move or animate the camera in its cancellation method. If a callback isn't required, leave it as null.
      */
     @UiThread
-    public final void animateCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
+    final void animateCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
 
         if (update.getTarget() == null) {
             Log.w(TAG, "animateCamera with null target coordinate passed in.  Will immediately return without animating camera.");
@@ -1443,7 +1443,7 @@ public class MapView extends FrameLayout {
      * @param callback   An optional callback to be notified from the main thread when the animation stops. If the animation stops due to its natural completion, the callback will be notified with onFinish(). If the animation stops due to interruption by a later camera movement or a user gesture, onCancel() will be called. The callback should not attempt to move or animate the camera in its cancellation method. If a callback isn't required, leave it as null.
      */
     @UiThread
-    public final void easeCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
+    final void easeCamera(CameraUpdate update, int durationMs, final MapboxMap.CancelableCallback callback) {
         if (update.getTarget() == null) {
             Log.w(TAG, "easeCamera with null target coordinate passed in.  Will immediately return without easing camera.");
             return;
@@ -1498,7 +1498,7 @@ public class MapView extends FrameLayout {
      * @param update The change that should be applied to the camera.
      */
     @UiThread
-    public final void moveCamera(CameraUpdate update) {
+    final void moveCamera(CameraUpdate update) {
         if (update.getTarget() == null) {
             Log.w(TAG, "moveCamera with null target coordinate passed in.  Will immediately return without moving camera.");
             return;
