@@ -44,16 +44,6 @@ public class VisibleCoordinateBoundsActivity extends AppCompatActivity {
         final LatLng losAngeles = new LatLng(34.053940, -118.242622);
         final LatLng newYork = new LatLng(40.712730, -74.005953);
 
-        mMapView.addMarker(new MarkerOptions()
-                .title("Los Angeles")
-                .snippet("City Hall")
-                .position(losAngeles));
-
-        mMapView.addMarker(new MarkerOptions()
-                .title("New York")
-                .snippet("City Hall")
-                .position(newYork));
-
         Snackbar.make(findViewById(android.R.id.content), R.string.action_visible_bounds_explanation, Snackbar.LENGTH_INDEFINITE)
                 .setAction(android.R.string.ok, new View.OnClickListener() {
                     @Override
@@ -69,6 +59,16 @@ public class VisibleCoordinateBoundsActivity extends AppCompatActivity {
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.DARK);
                 mapboxMap.setAllGesturesEnabled(false);
+
+                mapboxMap.addMarker(new MarkerOptions()
+                        .title("Los Angeles")
+                        .snippet("City Hall")
+                        .position(losAngeles));
+
+                mapboxMap.addMarker(new MarkerOptions()
+                        .title("New York")
+                        .snippet("City Hall")
+                        .position(newYork));
             }
         });
     }

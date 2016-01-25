@@ -30,6 +30,7 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
     private static final String STATE_MARKER_LIST = "markerList";
 
     private MapView mMapView;
+    private MapboxMap mMapboxMap;
     private ArrayList<MarkerOptions> mMarkerList;
 
     @Override
@@ -55,9 +56,6 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
 
         if (savedInstanceState != null) {
             mMarkerList = savedInstanceState.getParcelableArrayList(STATE_MARKER_LIST);
-            if(mMarkerList!=null) {
-                mMapView.addMarkers(mMarkerList);
-            }
         }else{
             mMarkerList = new ArrayList<>();
         }
@@ -65,8 +63,10 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                mMapboxMap = mapboxMap;
                 mapboxMap.setStyle(Style.EMERALD);
                 mapboxMap.setCameraPosition(new CameraPosition(new LatLng(45.1855569, 5.7215506), 11, 0, 0));
+                mapboxMap.addMarkers(mMarkerList);
             }
         });
     }
@@ -83,7 +83,7 @@ public class PressForMarkerActivity extends AppCompatActivity implements MapboxM
                 .snippet(snippet);
 
         mMarkerList.add(marker);
-        mMapView.addMarker(marker);
+        mMapboxMap.addMarker(marker);
     }
 
     @Override

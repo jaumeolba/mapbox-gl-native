@@ -1469,12 +1469,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public LatLng fromScreenLocation(@NonNull PointF point) {
-        if (point == null) {
-            Log.w(TAG, "point was null, so just returning (0, 0)");
-            return new LatLng();
-        }
-
+    LatLng fromScreenLocation(@NonNull PointF point) {
         float x = point.x;
         float y = point.y;
 
@@ -1490,11 +1485,6 @@ public class MapView extends FrameLayout {
     @UiThread
     @NonNull
     public PointF toScreenLocation(@NonNull LatLng location) {
-        if (location == null) {
-            Log.w(TAG, "location was null, so just returning (0, 0)");
-            return new PointF();
-        }
-
         PointF point = mNativeMapView.pixelForLatLng(location);
 
         float x = point.x * mScreenDensity;
@@ -1573,7 +1563,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public Marker addMarker(@NonNull MarkerOptions markerOptions) {
+    Marker addMarker(@NonNull MarkerOptions markerOptions) {
         if (markerOptions == null) {
             Log.w(TAG, "markerOptions was null, so just returning null");
             return null;
@@ -1599,7 +1589,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public List<Marker> addMarkers(@NonNull List<MarkerOptions> markerOptionsList) {
+    List<Marker> addMarkers(@NonNull List<MarkerOptions> markerOptionsList) {
         if (markerOptionsList == null) {
             Log.w(TAG, "markerOptionsList was null, so just returning null");
             return null;
@@ -1634,7 +1624,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public Polyline addPolyline(@NonNull PolylineOptions polylineOptions) {
+    Polyline addPolyline(@NonNull PolylineOptions polylineOptions) {
         if (polylineOptions == null) {
             Log.w(TAG, "polylineOptions was null, so just returning null");
             return null;
@@ -1656,7 +1646,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public List<Polyline> addPolylines(@NonNull List<PolylineOptions> polylineOptionsList) {
+    List<Polyline> addPolylines(@NonNull List<PolylineOptions> polylineOptionsList) {
         if (polylineOptionsList == null) {
             Log.w(TAG, "polylineOptionsList was null, so just returning null");
             return null;
@@ -1689,7 +1679,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public Polygon addPolygon(@NonNull PolygonOptions polygonOptions) {
+    Polygon addPolygon(@NonNull PolygonOptions polygonOptions) {
         if (polygonOptions == null) {
             Log.w(TAG, "polygonOptions was null, so just returning null");
             return null;
@@ -1712,7 +1702,7 @@ public class MapView extends FrameLayout {
      */
     @UiThread
     @NonNull
-    public List<Polygon> addPolygons(@NonNull List<PolygonOptions> polygonOptionsList) {
+    List<Polygon> addPolygons(@NonNull List<PolygonOptions> polygonOptionsList) {
         if (polygonOptionsList == null) {
             Log.w(TAG, "polygonOptionsList was null, so just returning null");
             return null;
@@ -1747,7 +1737,7 @@ public class MapView extends FrameLayout {
      * @param marker Marker to remove
      */
     @UiThread
-    public void removeMarker(@NonNull Marker marker) {
+    void removeMarker(@NonNull Marker marker) {
         removeAnnotation(marker);
     }
 
@@ -1777,7 +1767,7 @@ public class MapView extends FrameLayout {
      * @param annotationList A list of annotation objects to remove.
      */
     @UiThread
-    public void removeAnnotations(@NonNull List<? extends Annotation> annotationList) {
+    void removeAnnotations(@NonNull List<? extends Annotation> annotationList) {
         if (annotationList == null) {
             Log.w(TAG, "annotationList was null, so just returning");
             return;
@@ -1795,7 +1785,7 @@ public class MapView extends FrameLayout {
      * Removes all annotations from the map.
      */
     @UiThread
-    public void removeAllAnnotations() {
+    void removeAllAnnotations() {
         int count = mAnnotations.size();
         long[] ids = new long[mAnnotations.size()];
 
@@ -1819,7 +1809,7 @@ public class MapView extends FrameLayout {
      * list will not update the map.
      */
     @NonNull
-    public List<Annotation> getAllAnnotations() {
+    List<Annotation> getAllAnnotations() {
         return new ArrayList<>(mAnnotations);
     }
 
@@ -1871,7 +1861,7 @@ public class MapView extends FrameLayout {
      * @return The distance measured in meters.
      */
     @UiThread
-    public double getMetersPerPixelAtLatitude(@FloatRange(from = -180, to = 180) double latitude) {
+    double getMetersPerPixelAtLatitude(@FloatRange(from = -180, to = 180) double latitude) {
         return mNativeMapView.getMetersPerPixelAtLatitude(latitude, getZoom()) / mScreenDensity;
     }
 
@@ -1886,7 +1876,7 @@ public class MapView extends FrameLayout {
      * @param marker The marker to select.
      */
     @UiThread
-    public void selectMarker(@NonNull Marker marker) {
+    void selectMarker(@NonNull Marker marker) {
         if (marker == null) {
             Log.w(TAG, "marker was null, so just" +
                     " returning");
@@ -1921,7 +1911,7 @@ public class MapView extends FrameLayout {
      * Deselects any currently selected marker. All markers will have it's info window closed.
      */
     @UiThread
-    public void deselectMarkers() {
+    void deselectMarkers() {
         if (mSelectedMarkers.isEmpty()) {
             return;
         }

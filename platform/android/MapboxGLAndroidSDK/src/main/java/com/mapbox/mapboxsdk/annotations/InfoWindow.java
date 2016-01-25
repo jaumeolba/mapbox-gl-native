@@ -206,7 +206,10 @@ public class InfoWindow {
     }
 
     private void onClose() {
-        mMapView.get().deselectMarker(getBoundMarker());
+        MapView mapView = mMapView.get();
+        if(mapView!=null) {
+            mapView.deselectMarker(getBoundMarker());
+        }
     }
 
     InfoWindow setBoundMarker(Marker boundMarker) {

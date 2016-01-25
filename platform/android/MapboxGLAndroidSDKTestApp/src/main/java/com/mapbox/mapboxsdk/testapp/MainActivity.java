@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Called when activity is created
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Load the layout
@@ -122,21 +122,6 @@ public class MainActivity extends AppCompatActivity {
         mMapView.onCreate(savedInstanceState);
 
         mMapView.setOnFpsChangedListener(new MyOnFpsChangedListener());
-
-        mMapView.setOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull LatLng point) {
-                MarkerOptions marker = new MarkerOptions()
-                        .position(point)
-                        .title("Dropped Pin")
-                        .snippet(LAT_LON_FORMATTER.format(point.getLatitude()) + ", " +
-                                LAT_LON_FORMATTER.format(point.getLongitude()))
-                        .icon(null);
-
-                mMarkerList.add(marker);
-                mMapView.addMarker(marker);
-            }
-        });
 
         mMapView.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
             @Override
@@ -176,19 +161,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Restore saved state
-        if (savedInstanceState != null) {
-            mIsAnnotationsOn = savedInstanceState.getBoolean(STATE_IS_ANNOTATIONS_ON);
-            mSelectedStyle = savedInstanceState.getInt(STATE_SELECTED_STYLE);
-            mMarkerList = savedInstanceState.getParcelableArrayList(STATE_MARKER_LIST);
-            mMapView.addMarkers(mMarkerList);
-        }
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-
-                // set MapboxMap for later usage
+            public void onMapReady(@NonNull final MapboxMap mapboxMap) {
                 mMapboxMap = mapboxMap;
 
                 // add location listener to MapboxMap
@@ -217,6 +192,30 @@ public class MainActivity extends AppCompatActivity {
                 mNavigationView.getMenu().findItem(R.id.action_debug).setChecked(mapboxMap.isDebugActive());
                 mNavigationView.getMenu().findItem(R.id.action_markers).setChecked(mIsAnnotationsOn);
                 toggleGps(mapboxMap.isMyLocationEnabled());
+
+                // Listeners
+                mapboxMap.setOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(@NonNull LatLng point) {
+                        MarkerOptions marker = new MarkerOptions()
+                                .position(point)
+                                .title("Dropped Pin")
+                                .snippet(LAT_LON_FORMATTER.format(point.getLatitude()) + ", " +
+                                        LAT_LON_FORMATTER.format(point.getLongitude()))
+                                .icon(null);
+
+                        mMarkerList.add(marker);
+                        mapboxMap.addMarker(marker);
+                    }
+                });
+
+                // Restore saved state
+                if (savedInstanceState != null) {
+                    mIsAnnotationsOn = savedInstanceState.getBoolean(STATE_IS_ANNOTATIONS_ON);
+                    mSelectedStyle = savedInstanceState.getInt(STATE_SELECTED_STYLE);
+                    mMarkerList = savedInstanceState.getParcelableArrayList(STATE_MARKER_LIST);
+                    mapboxMap.addMarkers(mMarkerList);
+                }
 
                 changeMapStyle(mSelectedStyle);
             }
@@ -546,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
                 addPolyline();
                 addPolygon();
                 mMapboxMap.setCameraPosition(
-                        new CameraPosition(new LatLng(38.11727, -122.22839),7,0,0));
+                        new CameraPosition(new LatLng(38.11727, -122.22839), 7, 0, 0));
             }
         } else {
             if (mIsAnnotationsOn) {
@@ -566,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
         final MarkerOptions cheeseRoom = generateMarker("Cheese Room", "The only air conditioned room on the property", dogIcon, 38.531577, -122.010646);
         markerOptionsList.add(cheeseRoom);
 
-        mMapView.addMarkers(markerOptionsList);
+        mMapboxMap.addMarkers(markerOptionsList);
     }
 
     private MarkerOptions generateMarker(String title, String snippet, Icon icon, double lat, double lng) {
@@ -581,8 +580,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             String geojsonStr = GeoParseUtil.loadStringFromAssets(this, "small_line.geojson");
             List<LatLng> latLngs = GeoParseUtil.parseGeoJSONCoordinates(geojsonStr);
-            MapView map = mMapView;
-            map.addPolyline(new PolylineOptions()
+            mMapboxMap.addPolyline(new PolylineOptions()
                     .add(latLngs.toArray(new LatLng[latLngs.size()]))
                     .width(2)
                     .color(Color.RED));
@@ -602,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                     .add(latLngs.toArray(new LatLng[latLngs.size()]))
                     .strokeColor(Color.MAGENTA)
                     .fillColor(Color.BLUE).alpha(0.5f));
-            map.addPolygons(opts).get(0);
+            mMapboxMap.addPolygons(opts).get(0);
         } catch (Exception e) {
             Log.e(TAG, "Error adding Polygon: " + e);
             e.printStackTrace();
@@ -611,7 +609,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void removeAnnotations() {
         mMarkerList.clear();
-        mMapView.removeAllAnnotations();
+        mMapboxMap.removeAllAnnotations();
     }
 
     private void addCustomLayer() {

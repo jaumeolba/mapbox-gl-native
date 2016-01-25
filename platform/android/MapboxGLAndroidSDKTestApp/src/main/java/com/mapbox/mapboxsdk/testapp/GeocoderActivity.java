@@ -55,23 +55,22 @@ public class GeocoderActivity extends AppCompatActivity {
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.setAccessToken(ApiAccess.getToken(this));
         mapView.onCreate(savedInstanceState);
-        mapView.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                setMessage("Geocoding...");
-                mapView.removeAllAnnotations();
-                mapView.addMarker(new MarkerOptions()
-                        .position(point)
-                        .title("Your finger is here"));
-                geocode(point);
-            }
-        });
-
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+            public void onMapReady(@NonNull final MapboxMap mapboxMap) {
                 mapboxMap.setStyle(Style.EMERALD);
                 mapboxMap.setCameraPosition(new CameraPosition(DC_DUPONT_CIRCLE, 15, 0, 0));
+                mapboxMap.setOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng point) {
+                        setMessage("Geocoding...");
+                        mapboxMap.removeAllAnnotations();
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(point)
+                                .title("Your finger is here"));
+                        geocode(point);
+                    }
+                });
             }
         });
     }
